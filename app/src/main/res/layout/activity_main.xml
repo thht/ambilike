@@ -1,0 +1,122 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/buttonConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/buttonStart"
+        android:text="Connect"/>
+
+    <Button
+        android:id="@+id/buttonStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/buttonStop"
+        android:layout_below="@+id/buttonConnect"
+        android:enabled="false"
+        android:text="Start"/>
+
+    <Button
+        android:id="@+id/buttonStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonStart"
+        android:layout_centerHorizontal="true"
+        android:enabled="false"
+        android:text="Stop"/>
+
+    <NumberPicker
+        android:id="@+id/numberPickerTransition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/buttonStop"
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/textViewTrans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/numberPickerTransition"
+        android:text="Transition"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <NumberPicker
+        android:id="@+id/numberPickerColorExp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/numberPickerTransition"
+        android:layout_alignStart="@+id/buttonStop"
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/textViewColorExp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/numberPickerColorExp"
+        android:layout_centerHorizontal="true"
+        android:text="Color Exp"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <NumberPicker
+        android:id="@+id/numberPickerBriExp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/buttonStop"
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/textViewBriExp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/numberPickerColorExp"
+        android:text="Bri Exp"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <NumberPicker
+        android:id="@+id/numberPickerMaxBri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/buttonStop"
+        android:layout_alignTop="@+id/numberPickerMinBri"
+        android:orientation="vertical"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textViewTrans"
+        android:layout_below="@+id/numberPickerMinBri"
+        android:text="Min Bri"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:text="Max Bri"
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+    <NumberPicker
+        android:id="@+id/numberPickerMinBri"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textViewTrans"
+        android:orientation="vertical"/>
+
+</RelativeLayout>
