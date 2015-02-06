@@ -20,6 +20,8 @@ package de.th_ht.ambilike;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.philips.lighting.hue.sdk.PHAccessPoint;
@@ -34,6 +36,7 @@ import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Hue
 {
@@ -46,6 +49,7 @@ public class Hue
   private float briExp;
   private int minBri;
   private int maxBri;
+  private String username;
 
   private boolean connected;
   private PHSDKListener listener = new PHSDKListener()
@@ -58,7 +62,7 @@ public class Hue
       // and let the user select their bridge.   If one is found you may opt to connect automatically to that bridge.
       doToast("Bridge found", Toast.LENGTH_SHORT);
       PHAccessPoint ap = (PHAccessPoint) accessPoint.get(0);
-      ap.setUsername("thhtthhtthhtthhtthhtthhtthhtthht");
+      ap.setUsername(username);
       if (!phHueSDK.isAccessPointConnected(ap))
       {
         phHueSDK.connect(ap);
@@ -136,7 +140,7 @@ public class Hue
     public void onError(int code, final String message)
     {
       // Here you can handle events such as Bridge Not Responding, Authentication Failed and Bridge Not Found
-      doToast("Hue Error: " + message, Toast.LENGTH_LONG);
+      doToast("Hue Error: " + message, Toast.LENGTH_SHORT);
     }
 
     @Override
@@ -169,6 +173,12 @@ public class Hue
     appContext = _appContext;
     phHueSDK = PHHueSDK.getInstance();
     phHueSDK.getNotificationManager().registerSDKListener(listener);
+
+    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
+    username = settings.getString("HueUser", UUID.randomUUID().toString());
+    SharedPreferences.Editor editor = settings.edit();
+    editor.putString("HueUser", username);
+    editor.commit();
   }
 
   public void connect()
