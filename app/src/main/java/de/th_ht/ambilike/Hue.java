@@ -84,10 +84,8 @@ public class Hue
     {
       // Here you receive notifications that the BridgeResource Cache was updated. Use the PHMessageType to
       // check which cache was updated, e.g.
-      //System.out.println("onCacheUpdate");
       if (cacheNotificationsList.contains(PHMessageType.LIGHTS_CACHE_UPDATED))
       {
-        //System.out.println("Lights Cache Updated ");
       }
     }
 
@@ -126,14 +124,12 @@ public class Hue
     @Override
     public void onConnectionResumed(PHBridge bridge)
     {
-      System.out.println("onConnectionResme");
     }
 
     @Override
     public void onConnectionLost(PHAccessPoint accessPoint)
     {
       // Here you would handle the loss of connection to your bridge.
-      System.out.println("onConnectionLost");
     }
 
     @Override
@@ -147,7 +143,6 @@ public class Hue
     public void onParsingErrors(List parsingErrorsList)
     {
       // Any JSON parsing errors are returned here.  Typically your program should never return these.
-      System.out.println("onParsingError");
     }
 
     private void doToast(final String text, final int length)
@@ -167,7 +162,6 @@ public class Hue
 
   public Hue(MainActivity _mainwin, Context _appContext)
   {
-    System.out.println("In Hue Constructur...");
     connected = false;
     mainwin = _mainwin;
     appContext = _appContext;
@@ -274,11 +268,9 @@ public class Hue
       newstate.setBrightness(brightness);
       newstate.setTransitionTime(transition);
 
-      //System.out.println("Setting lights to " + rgb[0] + " " + rgb[1] + " " + rgb[2] + " bri: " + brightness);
       ActivityManager am = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
       List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
       boolean isNetflix = false;
-      //if(taskInfo.get(0).topActivity.getClassName().equals("com.netflix.mediaclient.ui.player.PlayerActivity"))
       if (taskInfo.get(0).topActivity.getClassName().contains(".netflix."))
         isNetflix = true;
 
@@ -292,7 +284,6 @@ public class Hue
       for (int i : lights)
       {
         PHLight light = (PHLight) hueLights.get(i);
-        //System.out.println("Setting lights:" + rgb[0] + " " + rgb[1] + " " + rgb[2]);
         float[] xy = PHUtilities.calculateXYFromRGB(rgb[0], rgb[1], rgb[2], light.getModelNumber());
         newstate.setX(xy[0]);
         newstate.setY(xy[1]);
@@ -301,7 +292,6 @@ public class Hue
       }
     } catch (NullPointerException e)
     {
-      System.out.println("Hue class does not seem to be ready....");
     }
   }
 

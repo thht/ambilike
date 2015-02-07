@@ -30,7 +30,6 @@ public class HueReceiver extends BroadcastReceiver
   public HueReceiver()
   {
     super();
-    System.out.println("HueReceiver created...");
   }
 
   @Override

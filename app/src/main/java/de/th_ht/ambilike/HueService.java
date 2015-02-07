@@ -43,7 +43,6 @@ public class HueService extends Service
 
   public HueService()
   {
-    System.out.println("HueService started...");
   }
 
   @Override
@@ -119,15 +118,13 @@ public class HueService extends Service
       boolean good = true;
       while (!killed)
       {
-        //System.out.println("Going for it...");
         if (first)
         {
           good = screenshot.snap();
-          //first = false;
         }
         if (good)
         {
-          int clr = screenshot.getDominantColor2();
+          int clr = screenshot.getDominantColor();
           int[] rgb = new int[]{Color.red(clr), Color.green(clr), Color.blue(clr)};
           float[] hsv = new float[3];
           Color.colorToHSV(clr, hsv);
@@ -137,17 +134,7 @@ public class HueService extends Service
           bundle.putIntArray("rgb", rgb);
           bundle.putInt("bri", (int) (hsv[2] * 255));
           intent.putExtra("Stuff", bundle);
-          //System.out.println("Sending intent...");
-          //sendBroadcast(intent);
           LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-        }
-
-        try
-        {
-          //Thread.sleep(400);
-        } catch (Exception e)
-        {
-          System.out.println("Error");
         }
       }
     }

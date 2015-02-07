@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -157,7 +156,6 @@ public class MainActivity extends ActionBarActivity
         intent.putExtra("Stuff", bundle);
 
         getApplicationContext().startService(intent);
-        System.out.println("buttonStart.OnClick exit...");
       }
     });
 
@@ -178,8 +176,6 @@ public class MainActivity extends ActionBarActivity
         List<PHLight> lights = hue.getLights();
         CharSequence[] lights_strings = new CharSequence[lights.size()];
         final boolean[] lights_checked = new boolean[lights.size()];
-
-        Log.d("MainActivity", "Lights list has " + lights.size() + " elements");
 
         List<Integer> chosenLights = getLightsFromPreference();
 
@@ -212,7 +208,6 @@ public class MainActivity extends ActionBarActivity
               @Override
               public void onClick(DialogInterface dialogInterface, int i)
               {
-                Log.d("MainActivity", "Ok clicked in dialog...");
                 List<Integer> lights_chosen = new ArrayList<Integer>();
                 for (int j = 0; j < lights_checked.length; j++)
                 {
@@ -231,7 +226,6 @@ public class MainActivity extends ActionBarActivity
               @Override
               public void onClick(DialogInterface dialogInterface, int i)
               {
-                Log.d("MainActivity", "Cancel clicked...");
               }
             })
             .show();
@@ -359,7 +353,7 @@ public class MainActivity extends ActionBarActivity
     editor.putInt("NLights", nLights);
     editor.commit();
   }
-  
+
   @Override
   public void onResume()
   {
