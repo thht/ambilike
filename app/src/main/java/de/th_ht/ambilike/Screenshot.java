@@ -25,8 +25,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.graphics.Palette;
 import android.widget.ImageView;
 
-import org.apache.http.util.ByteArrayBuffer;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,10 +37,9 @@ import java.util.concurrent.Semaphore;
 
 public class Screenshot implements Serializable
 {
-  protected Bitmap shot, oldshot;
+  protected Bitmap shot;
   private String myFilesDir;
   private String cmdline;
-  private ByteArrayBuffer buf;
   private int displaywidth, displayheight;
   private Semaphore semaphore;
   private Process sh;
@@ -51,7 +48,6 @@ public class Screenshot implements Serializable
 
   public Screenshot(int _displaywidth, int _displayheight, Context appContext)
   {
-    buf = new ByteArrayBuffer(0);
     shot = Bitmap.createBitmap(1920, 1280, Bitmap.Config.ARGB_8888);
     displaywidth = _displaywidth;
     displayheight = _displayheight;
@@ -193,7 +189,6 @@ public class Screenshot implements Serializable
       final int targetWidth = 400;
       int targetHeight = (int) (shot.getHeight() / (shot.getWidth() / (double) targetWidth));
       scaledShot = Bitmap.createScaledBitmap(shot, targetWidth, targetHeight, true);
-      oldshot = scaledShot;
       Palette pal = Palette.generate(scaledShot, 20);
       List<Palette.Swatch> swatches = pal.getSwatches();
 
@@ -217,7 +212,13 @@ public class Screenshot implements Serializable
         }
       }
 
-      clr = curSwatch.getRgb();
+      try
+      {
+        clr = curSwatch.getRgb();
+      } catch (NullPointerException e)
+      {
+        clr = oldClr;
+      }
       oldClr = clr;
 
       semaphore.release();

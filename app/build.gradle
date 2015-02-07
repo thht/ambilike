@@ -20,7 +20,7 @@ android {
     }
 }
 
-if (new File(projectDir.toString() + java.io.File.separator + "signing.gradle").exists()) {
+if (new File(projectDir.toString() + File.separator + "signing.gradle").exists()) {
     apply from: 'signing.gradle';
 }
 

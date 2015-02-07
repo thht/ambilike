@@ -56,19 +56,9 @@ public class MainActivity extends ActionBarActivity
   private NumberPicker numberMaxBri;
   private HueReceiver huereceiver;
 
-  static public String getMyFilesDir()
-  {
-    return myFilesDir;
-  }
-
   public static Hue getHue()
   {
     return hue;
-  }
-
-  public static DisplayMetrics getMetric()
-  {
-    return metric;
   }
 
   @Override
@@ -183,17 +173,11 @@ public class MainActivity extends ActionBarActivity
         for (PHLight cur_light : lights)
         {
           lights_strings[i] = cur_light.getName();
-          if (chosenLights.contains(i))
-          {
-            lights_checked[i] = true;
-          } else
-          {
-            lights_checked[i] = false;
-          }
+          lights_checked[i] = chosenLights.contains(i);
           i++;
         }
 
-        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+        new AlertDialog.Builder(MainActivity.this)
             .setTitle("Please choose lights")
             .setMultiChoiceItems(lights_strings, lights_checked, new DialogInterface.OnMultiChoiceClickListener()
             {
@@ -208,7 +192,7 @@ public class MainActivity extends ActionBarActivity
               @Override
               public void onClick(DialogInterface dialogInterface, int i)
               {
-                List<Integer> lights_chosen = new ArrayList<Integer>();
+                List<Integer> lights_chosen = new ArrayList<>();
                 for (int j = 0; j < lights_checked.length; j++)
                 {
                   if (lights_checked[j])
@@ -319,7 +303,7 @@ public class MainActivity extends ActionBarActivity
   private List<Integer> getLightsFromPreference()
   {
     SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-    List<Integer> lights = new ArrayList<Integer>();
+    List<Integer> lights = new ArrayList<>();
     int nLights = prefs.getInt("NLights", 0);
     for (int i = 0; i < nLights; i++)
     {

@@ -297,9 +297,8 @@ public class Hue
 
   public List<PHLight> getLights()
   {
-    List<PHLight> list = cache.getAllLights();
 
-    return list;
+    return cache.getAllLights();
   }
 
   public void setLights(List<Integer> _lights)

@@ -41,10 +41,6 @@ public class HueService extends Service
   private NotificationManager mNM;
   private int NOTIFICATION = 0;
 
-  public HueService()
-  {
-  }
-
   @Override
   public void onCreate()
   {
@@ -95,7 +91,7 @@ public class HueService extends Service
     // Set the icon, scrolling text and timestamp
     Notification notification = new Notification.Builder(getApplicationContext())
         .setContentTitle("HueService")
-        .setContentText("HueService started")
+        .setContentText(text)
         .setContentIntent(contentIntent)
         .setOngoing(true)
         .setSmallIcon(R.drawable.app_icon)
@@ -114,14 +110,11 @@ public class HueService extends Service
     public void run()
     {
       killed = false;
-      boolean first = true;
       boolean good = true;
       while (!killed)
       {
-        if (first)
-        {
-          good = screenshot.snap();
-        }
+        good = screenshot.snap();
+
         if (good)
         {
           int clr = screenshot.getDominantColor();
@@ -147,9 +140,5 @@ public class HueService extends Service
 
   public class LocalBinder extends Binder
   {
-    HueService getService()
-    {
-      return HueService.this;
-    }
   }
 }

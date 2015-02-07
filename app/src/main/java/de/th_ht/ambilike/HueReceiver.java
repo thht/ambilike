@@ -25,19 +25,12 @@ import android.os.Bundle;
 
 public class HueReceiver extends BroadcastReceiver
 {
-  private static int rCounter = 0;
-
-  public HueReceiver()
-  {
-    super();
-  }
-
   @Override
   public void onReceive(Context context, Intent intent)
   {
     Hue hue = MainActivity.getHue();
 
-    Bundle bundle = (Bundle) intent.getBundleExtra("Stuff");
+    Bundle bundle = intent.getBundleExtra("Stuff");
     int[] rgb = bundle.getIntArray("rgb");
     int bri = bundle.getInt("bri", 128);
 
