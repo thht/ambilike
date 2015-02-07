@@ -18,6 +18,8 @@
 
 package de.th_ht.ambilike;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -25,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,9 +35,10 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.philips.lighting.model.PHLight;
 import com.stericson.RootShell.RootShell;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity
@@ -45,6 +49,7 @@ public class MainActivity extends ActionBarActivity
   private Button buttonConnect;
   private Button buttonStart;
   private Button buttonStop;
+  private Button buttonChooseLights;
   private NumberPicker numberTransition;
   private NumberPicker numberColorExp;
   private NumberPicker numberBriExp;
@@ -74,8 +79,8 @@ public class MainActivity extends ActionBarActivity
     setContentView(R.layout.activity_main);
 
     hue = new Hue(this, getApplicationContext());
-    List<Integer> allLights = Arrays.asList(1, 2);
-    hue.setLights(allLights);
+    //List<Integer> allLights = Arrays.asList(1, 2);
+    hue.setLights(getLightsFromPreference());
 
 
     myFilesDir = getExternalCacheDir().toString();
@@ -84,6 +89,7 @@ public class MainActivity extends ActionBarActivity
     buttonConnect = (Button) findViewById(R.id.buttonConnect);
     buttonStart = (Button) findViewById(R.id.buttonStart);
     buttonStop = (Button) findViewById(R.id.buttonStop);
+    buttonChooseLights = (Button) findViewById(R.id.buttonChooseLights);
 
     numberBriExp = (NumberPicker) findViewById(R.id.numberPickerBriExp);
     numberBriExp.setMinValue(0);
@@ -166,6 +172,74 @@ public class MainActivity extends ActionBarActivity
       }
     });
 
+    buttonChooseLights.setOnClickListener(new View.OnClickListener()
+    {
+      @Override
+      public void onClick(View view)
+      {
+        List<PHLight> lights = hue.getLights();
+        CharSequence[] lights_strings = new CharSequence[lights.size()];
+        final boolean[] lights_checked = new boolean[lights.size()];
+
+        Log.d("MainActivity", "Lights list has " + lights.size() + " elements");
+
+        List<Integer> chosenLights = getLightsFromPreference();
+
+        int i = 0;
+        for (PHLight cur_light : lights)
+        {
+          lights_strings[i] = cur_light.getName();
+          if (chosenLights.contains(i))
+          {
+            lights_checked[i] = true;
+          } else
+          {
+            lights_checked[i] = false;
+          }
+          i++;
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+            .setTitle("Please choose lights")
+            .setMultiChoiceItems(lights_strings, lights_checked, new DialogInterface.OnMultiChoiceClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i, boolean b)
+              {
+                lights_checked[i] = b;
+              }
+            })
+            .setPositiveButton("Ok", new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                Log.d("MainActivity", "Ok clicked in dialog...");
+                List<Integer> lights_chosen = new ArrayList<Integer>();
+                for (int j = 0; j < lights_checked.length; j++)
+                {
+                  if (lights_checked[j])
+                  {
+                    lights_chosen.add(j);
+                  }
+                }
+
+                setLightsToPreferences(lights_chosen);
+                hue.setLights(lights_chosen);
+              }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+            {
+              @Override
+              public void onClick(DialogInterface dialogInterface, int i)
+              {
+                Log.d("MainActivity", "Cancel clicked...");
+              }
+            })
+            .show();
+      }
+    });
+
     numberColorExp.setOnValueChangedListener(new NumberPicker.OnValueChangeListener()
     {
       @Override
@@ -222,6 +296,7 @@ public class MainActivity extends ActionBarActivity
   {
     buttonStart.setEnabled(isconnected);
     buttonStop.setEnabled(isconnected);
+    buttonChooseLights.setEnabled(isconnected);
   }
 
   @Override
@@ -249,11 +324,44 @@ public class MainActivity extends ActionBarActivity
     return super.onOptionsItemSelected(item);
   }
 
-  public void doSnap()
+  private List<Integer> getLightsFromPreference()
   {
+    SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+    List<Integer> lights = new ArrayList<Integer>();
+    int nLights = prefs.getInt("NLights", 0);
+    for (int i = 0; i < nLights; i++)
+    {
+      boolean light_chosen = prefs.getBoolean("Light" + i + "_chosen", false);
+      if (light_chosen)
+      {
+        lights.add(i);
+      }
+    }
 
+    return lights;
   }
 
+  private void setLightsToPreferences(List<Integer> lights)
+  {
+    SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+    SharedPreferences.Editor editor = prefs.edit();
+    int nLights = hue.getLights().size();
+
+    for (int i = 0; i < nLights; i++)
+    {
+      if (lights.contains(i))
+      {
+        editor.putBoolean("Light" + i + "_chosen", true);
+      } else
+      {
+        editor.putBoolean("Light" + i + "_chosen", false);
+      }
+    }
+
+    editor.putInt("NLights", nLights);
+    editor.commit();
+  }
+  
   @Override
   public void onResume()
   {

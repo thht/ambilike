@@ -190,11 +190,6 @@ public class Hue
 
   }
 
-  public void setLights(List<Integer> _lights)
-  {
-    lights = _lights;
-  }
-
   public void setTransition(int _transition)
   {
     if (_transition < 5)
@@ -287,5 +282,17 @@ public class Hue
     {
       System.out.println("Hue class does not seem to be ready....");
     }
+  }
+
+  public List<PHLight> getLights()
+  {
+    List<PHLight> list = cache.getAllLights();
+
+    return list;
+  }
+
+  public void setLights(List<Integer> _lights)
+  {
+    lights = _lights;
   }
 }
