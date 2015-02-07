@@ -99,7 +99,7 @@ public class HueService extends Service
         .setContentText("HueService started")
         .setContentIntent(contentIntent)
         .setOngoing(true)
-        .setSmallIcon(R.drawable.ic_launcher)
+        .setSmallIcon(R.drawable.app_icon)
         .build();
 
 
