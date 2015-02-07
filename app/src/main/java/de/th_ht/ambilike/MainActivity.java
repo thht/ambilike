@@ -78,11 +78,6 @@ public class MainActivity extends ActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    hue = new Hue(this, getApplicationContext());
-    //List<Integer> allLights = Arrays.asList(1, 2);
-    hue.setLights(getLightsFromPreference());
-
-
     myFilesDir = getExternalCacheDir().toString();
     getExternalCacheDir().mkdirs();
 
@@ -110,6 +105,9 @@ public class MainActivity extends ActionBarActivity
     numberTransition = (NumberPicker) findViewById(R.id.numberPickerTransition);
     numberTransition.setMinValue(0);
     numberTransition.setMaxValue(100);
+
+    hue = new Hue(this, getApplicationContext());
+    hue.setLights(getLightsFromPreference());
 
     Toast.makeText(getApplicationContext(), "trying to get root", Toast.LENGTH_SHORT).show();
     if (!RootShell.isAccessGiven())

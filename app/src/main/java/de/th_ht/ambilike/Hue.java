@@ -179,10 +179,31 @@ public class Hue
     SharedPreferences.Editor editor = settings.edit();
     editor.putString("HueUser", username);
     editor.commit();
+    mainwin.runOnUiThread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        mainwin.connected(connected);
+      }
+    });
   }
 
   public void connect()
   {
+    if (connected)
+    {
+      Toast.makeText(appContext, "Already connected", Toast.LENGTH_LONG).show();
+      mainwin.runOnUiThread(new Runnable()
+      {
+        @Override
+        public void run()
+        {
+          mainwin.connected(connected);
+        }
+      });
+      return;
+    }
     Toast.makeText(appContext, "Connecting to bridge", Toast.LENGTH_LONG).show();
 
     PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
