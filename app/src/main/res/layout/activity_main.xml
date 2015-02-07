@@ -119,4 +119,13 @@
         android:layout_below="@+id/textViewTrans"
         android:orientation="vertical"/>
 
+    <Button
+        android:id="@+id/buttonChooseLights"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:enabled="false"
+        android:text="Choose Lights"/>
+
 </RelativeLayout>
