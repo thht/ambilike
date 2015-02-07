@@ -19,9 +19,8 @@ android {
     }
 }
 
-if (project.hasProperty("Ambilike.signing")
-        && new File(project.property("Ambilike.signing") + ".gradle").exists()) {
-    apply from: project.property("Ambilike.signing") + ".gradle";
+if (new File(projectDir.toString() + java.io.File.separator + "signing.gradle").exists()) {
+    apply from: 'signing.gradle';
 }
 
 dependencies {
