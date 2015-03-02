@@ -4,7 +4,7 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId "de.th_ht.ambilike"
+        applicationId "de.th_ht.ambilike_dev"
         minSdkVersion 19
         targetSdkVersion 21
         versionCode 1
