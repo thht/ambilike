@@ -18,29 +18,9 @@
 
 package de.th_ht.ambilike;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.widget.Toast;
-
-import com.philips.lighting.hue.sdk.PHAccessPoint;
-import com.philips.lighting.hue.sdk.PHBridgeSearchManager;
-import com.philips.lighting.hue.sdk.PHHueSDK;
-import com.philips.lighting.hue.sdk.PHMessageType;
-import com.philips.lighting.hue.sdk.PHSDKListener;
-import com.philips.lighting.hue.sdk.utilities.PHUtilities;
-import com.philips.lighting.model.PHBridge;
-import com.philips.lighting.model.PHBridgeResourcesCache;
-import com.philips.lighting.model.PHLight;
-import com.philips.lighting.model.PHLightState;
-
-import java.util.List;
-import java.util.UUID;
-
 public class Hue
 {
-  private PHHueSDK phHueSDK;
+  /*private PHHueSDK phHueSDK;
   private PHBridge bridge;
   private PHBridgeResourcesCache cache;
   private List<Integer> lights;
@@ -304,5 +284,5 @@ public class Hue
   public void setLights(List<Integer> _lights)
   {
     lights = _lights;
-  }
+  }*/
 }
