@@ -46,6 +46,9 @@ public class HueNotificationService extends Service
   @Bean
   HueNotification hueNotification;
 
+  @Bean
+  HueController hueController;
+
   @Pref
   HuePreferences_ preferences;
 
@@ -83,6 +86,7 @@ public class HueNotificationService extends Service
       public void run()
       {
         Timber.d("Brightness changed to " + hueNotification.getBrightness() + "%");
+        hueController.setBriMult(hueNotification.getBrightness());
         preferences.edit().Brightness().put(hueNotification.getBrightness()).apply();
       }
     });

@@ -31,7 +31,7 @@ public interface HuePreferences
   @DefaultInt(100)
   int Brightness();
 
-  @DefaultFloat(10)
+  @DefaultFloat(0.5f)
   float Transitiontime();
 
   @DefaultFloat(1)

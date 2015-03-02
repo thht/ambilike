@@ -33,6 +33,7 @@ dependencies {
     apt 'org.androidannotations:androidannotations:3.2'
     compile 'org.androidannotations:androidannotations:3.2'
     compile 'com.jakewharton.timber:timber:2.7.1'
+    compile project(':libhue')
 }
 
 apt {

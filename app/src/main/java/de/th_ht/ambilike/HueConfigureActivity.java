@@ -26,6 +26,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -38,6 +39,9 @@ public class HueConfigureActivity extends ActionBarActivity
 {
   @Pref
   HuePreferences_ preferences;
+
+  @Bean
+  HueController hueController;
   
   @ViewById
   SeekBar seekBarConfigureTransition;
@@ -69,11 +73,12 @@ public class HueConfigureActivity extends ActionBarActivity
   @AfterViews
   protected void init()
   {
-    transitionSettings = new SeekbarSettings(seekBarConfigureTransition, textConfigureTransition, 0, 20, preferences.Transitiontime().get(), true, new OnCustomSeekbarChangedListener()
+    transitionSettings = new SeekbarSettings(seekBarConfigureTransition, textConfigureTransition, 0, 5, preferences.Transitiontime().get(), true, new OnCustomSeekbarChangedListener()
     {
       @Override
       public void onChanged(double value)
       {
+        hueController.setTransition((int) (value * 1000));
         preferences.edit().Transitiontime().put((float) value).apply();
       }
     });
@@ -83,6 +88,7 @@ public class HueConfigureActivity extends ActionBarActivity
       @Override
       public void onChanged(double value)
       {
+        hueController.setColorExp((float) value);
         preferences.edit().Colorfullness().put((float) value).apply();
       }
     });
@@ -92,6 +98,7 @@ public class HueConfigureActivity extends ActionBarActivity
       @Override
       public void onChanged(double value)
       {
+        hueController.setMinBri((int) value);
         preferences.edit().MinBrightness().put((int) value).apply();
       }
     });
@@ -112,6 +119,7 @@ public class HueConfigureActivity extends ActionBarActivity
       @Override
       public void onChanged(double value)
       {
+        hueController.setMaxBri((int) value);
         preferences.edit().MaxBrightness().put((int) value).apply();
       }
     });
