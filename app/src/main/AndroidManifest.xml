@@ -29,7 +29,9 @@
 
         <activity
             android:name=".HueConfigureActivity_"
-            android:label="Configure"></activity>
+            android:excludeFromRecents="true"
+            android:label="Configure"
+            android:noHistory="true"></activity>
 
         <service android:name=".HueNotificationService_"></service>
 

@@ -28,6 +28,7 @@ import android.widget.TextView;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import static java.lang.Math.round;
 
@@ -35,6 +36,9 @@ import static java.lang.Math.round;
 @EActivity
 public class HueConfigureActivity extends ActionBarActivity
 {
+  @Pref
+  HuePreferences_ preferences;
+  
   @ViewById
   SeekBar seekBarConfigureTransition;
   @ViewById
@@ -65,10 +69,32 @@ public class HueConfigureActivity extends ActionBarActivity
   @AfterViews
   protected void init()
   {
-    transitionSettings = new SeekbarSettings(seekBarConfigureTransition, textConfigureTransition, 0, 20, 10, true);
-    colorfulnessSettings = new SeekbarSettings(seekBarConfigureColorfulness, textConfigureColorfulness, 0, 2, 1, true);
+    transitionSettings = new SeekbarSettings(seekBarConfigureTransition, textConfigureTransition, 0, 20, preferences.Transitiontime().get(), true, new OnCustomSeekbarChangedListener()
+    {
+      @Override
+      public void onChanged(double value)
+      {
+        preferences.edit().Transitiontime().put((float) value).apply();
+      }
+    });
 
-    minBrightnessSettings = new SeekbarSettings(seekBarConfigureMinBrightness, textConfigureMinBrightness, 0, 255, 0, false);
+    colorfulnessSettings = new SeekbarSettings(seekBarConfigureColorfulness, textConfigureColorfulness, 0, 2, preferences.Colorfullness().get(), true, new OnCustomSeekbarChangedListener()
+    {
+      @Override
+      public void onChanged(double value)
+      {
+        preferences.edit().Colorfullness().put((float) value).apply();
+      }
+    });
+
+    minBrightnessSettings = new SeekbarSettings(seekBarConfigureMinBrightness, textConfigureMinBrightness, 0, 255, preferences.MinBrightness().get(), false, new OnCustomSeekbarChangedListener()
+    {
+      @Override
+      public void onChanged(double value)
+      {
+        preferences.edit().MinBrightness().put((int) value).apply();
+      }
+    });
     minBrightnessSettings.setValidator(new Validator()
     {
       @Override
@@ -81,7 +107,14 @@ public class HueConfigureActivity extends ActionBarActivity
       }
     });
 
-    maxBrightnessSettings = new SeekbarSettings(seekBarConfigureMaxBrightness, textConfigureMaxBrightness, 0, 255, 255, false);
+    maxBrightnessSettings = new SeekbarSettings(seekBarConfigureMaxBrightness, textConfigureMaxBrightness, 0, 255, preferences.MaxBrightness().get(), false, new OnCustomSeekbarChangedListener()
+    {
+      @Override
+      public void onChanged(double value)
+      {
+        preferences.edit().MaxBrightness().put((int) value).apply();
+      }
+    });
     maxBrightnessSettings.setValidator(new Validator()
     {
       @Override
@@ -108,6 +141,12 @@ public class HueConfigureActivity extends ActionBarActivity
     public abstract boolean validate(double value);
   }
 
+  public interface OnCustomSeekbarChangedListener
+  {
+    void onChanged(double value);
+
+  }
+
   private class SeekbarSettings
   {
     private SeekBar seekbar;
@@ -117,14 +156,16 @@ public class HueConfigureActivity extends ActionBarActivity
     private double current;
     private Validator validator;
     private boolean usesFloat;
+    private OnCustomSeekbarChangedListener listener;
 
-    private SeekbarSettings(SeekBar seekbar, final TextView textView, double min, double max, final double current, boolean usesFloat)
+    private SeekbarSettings(SeekBar seekbar, final TextView textView, double min, double max, final double current, boolean usesFloat, OnCustomSeekbarChangedListener listener)
     {
       this.seekbar = seekbar;
       this.textView = textView;
       this.min = min;
       this.max = max;
       this.usesFloat = usesFloat;
+      this.listener = listener;
 
       setCurrent(current);
 
@@ -227,6 +268,8 @@ public class HueConfigureActivity extends ActionBarActivity
       }
 
       textView.setText(textString);
+
+      listener.onChanged(current);
     }
 
     public void setValidator(Validator validator)

@@ -39,6 +39,9 @@ import timber.log.Timber;
 @EBean(scope = EBean.Scope.Singleton)
 public class HueNotification
 {
+  private final int maxBrightness = 150;
+  private final int minBrightness = 0;
+  private final int brightnessStep = 5;
   @RootContext
   protected Context context;
   @SystemService
@@ -51,9 +54,6 @@ public class HueNotification
   private int notificationID;
   private HashMap<Integer, Runnable> listenerMap = new HashMap<>();
   private int brightness;
-  private int maxBrightness;
-  private int minBrightness;
-  private int brightnessStep;
   private Notification notification;
 
   @AfterInject
@@ -65,9 +65,6 @@ public class HueNotification
     notificationIcon = R.drawable.app_icon;
     notificationID = R.integer.hue_notification;
     brightness = 100;
-    brightnessStep = 5;
-    maxBrightness = 150;
-    minBrightness = 0;
 
     Intent notificationIntent = new Intent(context, HueNotificationReceiver_.class);
     n_view.setIntent(notificationIntent);
@@ -185,39 +182,6 @@ public class HueNotification
 
       ListenerRun(brightnessChangedListener);
     }
-  }
-
-  public int getMaxBrightness()
-  {
-    return maxBrightness;
-  }
-
-  public void setMaxBrightness(int maxBrightness)
-  {
-    if (maxBrightness >= 0)
-      this.maxBrightness = maxBrightness;
-  }
-
-  public int getMinBrightness()
-  {
-    return minBrightness;
-  }
-
-  public void setMinBrightness(int minBrightness)
-  {
-    if (minBrightness >= 0)
-      this.minBrightness = minBrightness;
-  }
-
-  public int getBrightnessStep()
-  {
-    return brightnessStep;
-  }
-
-  public void setBrightnessStep(int brightnessStep)
-  {
-    if (brightnessStep >= 0)
-      this.brightnessStep = brightnessStep;
   }
 
   public Notification getNotification()

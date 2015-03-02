@@ -27,6 +27,7 @@ import android.os.IBinder;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import timber.log.Timber;
 
@@ -45,11 +46,15 @@ public class HueNotificationService extends Service
   @Bean
   HueNotification hueNotification;
 
+  @Pref
+  HuePreferences_ preferences;
+
   @Override
   public void onCreate()
   {
     super.onCreate();
     hueNotification.setNotificationText("Started");
+    hueNotification.setBrightness(preferences.Brightness().get());
 
     hueNotification.setStartStopListener(new Runnable()
     {
@@ -78,6 +83,7 @@ public class HueNotificationService extends Service
       public void run()
       {
         Timber.d("Brightness changed to " + hueNotification.getBrightness() + "%");
+        preferences.edit().Brightness().put(hueNotification.getBrightness()).apply();
       }
     });
   }
