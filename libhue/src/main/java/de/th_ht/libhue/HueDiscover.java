@@ -1,0 +1,225 @@
+package de.th_ht.libhue;
+
+import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.UpnpServiceImpl;
+import org.fourthline.cling.android.AndroidUpnpServiceConfiguration;
+import org.fourthline.cling.model.message.header.STAllHeader;
+import org.fourthline.cling.model.meta.LocalDevice;
+import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.registry.Registry;
+import org.fourthline.cling.registry.RegistryListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import de.th_ht.libhue.Errors.DiscoverException;
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+/**
+ * Created by th on 27.02.2015.
+ */
+public class HueDiscover
+{
+  private static List<Device> devices = new ArrayList<>(100);
+  private static HueDiscoverListener listener;
+  private static Thread discoverThread = null;
+
+  public static void discover(HueDiscoverListener _listener, final int timeout) throws DiscoverException
+  {
+    if (discoverThread != null && discoverThread.isAlive())
+    {
+      throw new DiscoverException("Discovery already running");
+    }
+
+    HueDiscover.listener = _listener;
+
+    RegistryListener listener = new RegistryListener()
+    {
+      public void remoteDeviceDiscoveryStarted(Registry registry,
+                                               RemoteDevice device)
+      {
+      }
+
+      public void remoteDeviceDiscoveryFailed(Registry registry,
+                                              RemoteDevice device,
+                                              Exception ex)
+      {
+      }
+
+      public void remoteDeviceAdded(Registry registry, RemoteDevice device)
+      {
+        if (device.getDetails().getModelDetails().getModelName().contains("hue bridge"))
+        {
+          devices.add(new Device(device.getDetails().getBaseURL().toString(), device.getDetails().getFriendlyName()));
+        }
+      }
+
+      public void remoteDeviceUpdated(Registry registry, RemoteDevice device)
+      {
+      }
+
+      public void remoteDeviceRemoved(Registry registry, RemoteDevice device)
+      {
+      }
+
+      public void localDeviceAdded(Registry registry, LocalDevice device)
+      {
+      }
+
+      public void localDeviceRemoved(Registry registry, LocalDevice device)
+      {
+      }
+
+      public void beforeShutdown(Registry registry)
+      {
+      }
+
+      public void afterShutdown()
+      {
+      }
+    };
+
+    discoverThread = new Thread(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        // This will create necessary network resources for UPnP right away
+        devices.clear();
+        UpnpService upnpService = new UpnpServiceImpl(new AndroidUpnpServiceConfiguration());
+        upnpService.getRegistry().addListener(new UPNPListener());
+
+        // Send a search message to all devices and services, they should respond soon
+        upnpService.getControlPoint().search(new STAllHeader());
+
+        // Let's wait 10 seconds for them to respond
+        try
+        {
+          Thread.sleep(timeout);
+        } catch (Exception e)
+        {
+          upnpService.shutdown();
+          return;
+        }
+
+        // Release all resources and advertise BYEBYE to other UPnP devices
+        upnpService.shutdown();
+        HueDiscover.listener.devicesFound(HueDiscover.devices);
+      }
+    });
+
+    discoverThread.start();
+
+  }
+
+  public static void cancel()
+  {
+    if (discoverThread != null && discoverThread.isAlive())
+    {
+      discoverThread.interrupt();
+    }
+
+  }
+
+  public static void discoverNUPNP(final HueDiscoverListener listener)
+  {
+    Callback<List<HueNUPNPRestInterface.Device>> callback = new Callback<List<HueNUPNPRestInterface.Device>>()
+    {
+      @Override
+      public void success(List<HueNUPNPRestInterface.Device> devices, Response response)
+      {
+        for (HueNUPNPRestInterface.Device dev : devices)
+        {
+          HueDiscover.devices.add(new Device(dev.getURL(), dev.getName()));
+        }
+
+        listener.devicesFound(HueDiscover.devices);
+      }
+
+      @Override
+      public void failure(RetrofitError error)
+      {
+
+      }
+    };
+
+    devices.clear();
+    RestAdapter restAdapter = new RestAdapter.Builder()
+        .setEndpoint("https://www.meethue.com")
+        .setClient(new HueConnectionClient())
+            //.setLogLevel(RestAdapter.LogLevel.FULL)
+        .build();
+    HueNUPNPRestInterface hueNUPNPRestInterface = restAdapter.create(HueNUPNPRestInterface.class);
+
+    hueNUPNPRestInterface.getDevices(callback);
+
+  }
+
+  public interface HueDiscoverListener
+  {
+    void devicesFound(List<Device> devices);
+  }
+
+
+  public static class Device
+  {
+    public String url;
+    public String name;
+
+    public Device(String url, String name)
+    {
+      this.url = url;
+      this.name = name;
+    }
+  }
+
+  public static class UPNPListener implements RegistryListener
+  {
+    public void remoteDeviceDiscoveryStarted(Registry registry,
+                                             RemoteDevice device)
+    {
+    }
+
+    public void remoteDeviceDiscoveryFailed(Registry registry,
+                                            RemoteDevice device,
+                                            Exception ex)
+    {
+    }
+
+    public void remoteDeviceAdded(Registry registry, RemoteDevice device)
+    {
+      if (device.getDetails().getModelDetails().getModelName().contains("hue bridge"))
+      {
+        devices.add(new Device(device.getDetails().getBaseURL().toString(), device.getDetails().getFriendlyName()));
+      }
+    }
+
+    public void remoteDeviceUpdated(Registry registry, RemoteDevice device)
+    {
+    }
+
+    public void remoteDeviceRemoved(Registry registry, RemoteDevice device)
+    {
+    }
+
+    public void localDeviceAdded(Registry registry, LocalDevice device)
+    {
+    }
+
+    public void localDeviceRemoved(Registry registry, LocalDevice device)
+    {
+    }
+
+    public void beforeShutdown(Registry registry)
+    {
+    }
+
+    public void afterShutdown()
+    {
+    }
+  }
+
+}
