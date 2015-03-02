@@ -87,6 +87,7 @@ public class HueNotificationService extends Service
   {
     super.onStartCommand(intent, flags, startId);
     Timber.d("HueNotificationservice started...");
+    startForeground(R.integer.hue_notification, hueNotification.getNotification());
     return START_STICKY;
   }
 

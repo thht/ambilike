@@ -219,4 +219,9 @@ public class HueNotification
     if (brightnessStep >= 0)
       this.brightnessStep = brightnessStep;
   }
+
+  public Notification getNotification()
+  {
+    return notification;
+  }
 }
