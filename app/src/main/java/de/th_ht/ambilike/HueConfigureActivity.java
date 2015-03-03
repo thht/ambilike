@@ -57,11 +57,12 @@ public class HueConfigureActivity extends ActionBarActivity
   static final int DISMISS_FIND_BRIDGE_FAILED = 6;
   static final int SHOW_AUTH_FAILED = 7;
   static final int DISMISS_AUTH_FAILED = 8;
-  static final String EXTRA_INTENT = "ConfigActivityExtra";
+  static final int SHOW_ROOT_FAILED = 9;
   static final String DiscoverDlgFragmentTag = "DiscoverDialog";
   static final String DiscoverFailedDlgFragmentTag = "DiscoverFailedDialog";
   static final String AuthenticateDlgFragmentTag = "AuthDialog";
   static final String AuthenticationFailedDlgFragmentTag = "AuthFailedDialog";
+  static final String RootFailedDlgFragmentTag = "RootFailedDialog";
   static int intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP;
   @Bean
   static
@@ -131,6 +132,11 @@ public class HueConfigureActivity extends ActionBarActivity
   {
     HueConfigureActivity_.intent(context).showDialog(DISMISS_AUTH_FAILED).flags(intentFlags)
         .start();
+  }
+
+  public static void showRootFailed(Context context)
+  {
+    HueConfigureActivity_.intent(context).showDialog(SHOW_ROOT_FAILED).flags(intentFlags).start();
   }
 
   @Override
@@ -258,6 +264,11 @@ public class HueConfigureActivity extends ActionBarActivity
         case DISMISS_AUTH_FAILED:
           ((AuthFailedDialogFragment) fragmentManager.findFragmentByTag
               (AuthenticationFailedDlgFragmentTag)).dismiss();
+          break;
+
+        case SHOW_ROOT_FAILED:
+          new RootFailedDialogFragment().show(fragmentManager, RootFailedDlgFragmentTag);
+          break;
       }
     }
     catch (NullPointerException e)
@@ -305,6 +316,45 @@ public class HueConfigureActivity extends ActionBarActivity
             }
           })
           .setNegativeButton("No", new DialogInterface.OnClickListener()
+          {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+              hueController.terminate();
+            }
+          })
+          .create();
+
+      return dlg;
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+      if (getDialog() != null && getRetainInstance())
+      {
+        getDialog().setDismissMessage(null);
+      }
+      super.onDestroyView();
+    }
+  }
+
+  public static class RootFailedDialogFragment extends DialogFragment
+  {
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+      super.onCreate(savedInstanceState);
+      setRetainInstance(true);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      AlertDialog dlg = new AlertDialog.Builder(getActivity())
+          .setTitle("Could not get Root access.")
+          .setMessage("Do you want to try again?")
+          .setNegativeButton("Bye", new DialogInterface.OnClickListener()
           {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)

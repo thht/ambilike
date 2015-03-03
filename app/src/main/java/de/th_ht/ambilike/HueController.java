@@ -23,7 +23,10 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.stericson.RootShell.RootShell;
+
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -76,6 +79,19 @@ public class HueController
     briMult = preferences.Brightness().get();
     minBri = preferences.MinBrightness().get();
     maxBri = preferences.MaxBrightness().get();
+  }
+
+  @Background
+  public void testRoot()
+  {
+    if (!RootShell.isAccessGiven())
+    {
+      HueConfigureActivity.showRootFailed(context);
+    }
+    else
+    {
+      connect();
+    }
   }
 
   public void connect()

@@ -126,8 +126,7 @@ public class HueService extends Service
 
   void connect()
   {
-    hueController.connect();
-
+    hueController.testRoot();
   }
 
   @Override
