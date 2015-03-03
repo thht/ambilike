@@ -19,17 +19,29 @@
 package de.th_ht.ambilike;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+
+import java.util.List;
+
+import de.th_ht.libhue.Errors.DiscoverException;
+import de.th_ht.libhue.HueDiscover;
+import timber.log.Timber;
 
 import static java.lang.Math.round;
 
@@ -37,11 +49,22 @@ import static java.lang.Math.round;
 @EActivity
 public class HueConfigureActivity extends ActionBarActivity
 {
+  static final int CALL_FIND_BRIDGE = 1;
+  static final int CALL_AUTHENTICATE = 2;
+  static final int DISMISS_AUTHENTICATE = 3;
+  static final String EXTRA_INTENT = "ConfigActivityExtra";
+  static final String DiscoverDlgFragmentTag = "DiscoverDialog";
+  static final String AuthenticateDlgFragmentTag = "AuthDialog";
+  static final String IntentAction = "HueConfigIntent";
+  protected static int discoveryRun = 1;
+  @Bean
+  static
+  HueController hueController;
+  protected final int maxDiscoveryRuns = 4;
   @Pref
   HuePreferences_ preferences;
 
-  @Bean
-  HueController hueController;
+  FragmentManager fragmentManager = getFragmentManager();
   
   @ViewById
   SeekBar seekBarConfigureTransition;
@@ -136,12 +159,141 @@ public class HueConfigureActivity extends ActionBarActivity
     });
   }
 
+  @Override
+  protected void onResume()
+  {
+    super.onResume();
+    Timber.d("onResume");
+    handleIntent(getIntent());
+  }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu)
+  protected void onNewIntent(Intent intent)
   {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    return true;
+    super.onNewIntent(intent);
+    Timber.d("onNewIntent");
+    setIntent(intent);
+    handleIntent(intent);
+  }
+
+  void handleIntent(Intent intent)
+  {
+    Timber.d("handleIntent");
+    switch (intent.getIntExtra(EXTRA_INTENT, 0))
+    {
+      case CALL_FIND_BRIDGE:
+        discoveryRun = 1;
+        findBridge();
+        break;
+
+      case CALL_AUTHENTICATE:
+        new AuthenticateDialogFragment().show(fragmentManager, AuthenticateDlgFragmentTag);
+        break;
+
+      case DISMISS_AUTHENTICATE:
+        Timber.d("Dismissing autenticate...");
+        AuthenticateDialogFragment dlg = (AuthenticateDialogFragment) fragmentManager.findFragmentByTag(AuthenticateDlgFragmentTag);
+        if (dlg != null)
+          dlg.dismiss();
+        break;
+    }
+
+    setIntent(intent.putExtra(EXTRA_INTENT, 0));
+    super.onNewIntent(intent);
+  }
+
+  void authenticate()
+  {
+    Timber.d("Authenticate");
+
+  }
+
+  void findBridge()
+  {
+    Timber.d("Find Bridge...");
+    final DiscoverDialogFragment dlg = new DiscoverDialogFragment();
+    HueDiscover.HueDiscoverListener listener = new HueDiscover.HueDiscoverListener()
+    {
+      @Override
+      public void devicesFound(List<HueDiscover.Device> devices)
+      {
+        Timber.d("Found " + devices.size() + " devices");
+        if (devices.size() > 0)
+        {
+          DiscoverDialogFragment dlg = (DiscoverDialogFragment) fragmentManager.findFragmentByTag(DiscoverDlgFragmentTag);
+          if (dlg != null)
+          {
+            dlg.dismiss();
+          }
+
+          Timber.d("Device has url: " + devices.get(0).url);
+
+          preferences.edit().HueURL().put(devices.get(0).url).apply();
+          hueController.connect();
+        } else
+        {
+          if (discoveryRun == 1)
+          {
+            HueDiscover.discoverNUPNP(this);
+            discoveryRun++;
+          } else
+          {
+            DiscoverDialogFragment dlg = (DiscoverDialogFragment) fragmentManager.findFragmentByTag(DiscoverDlgFragmentTag);
+            if (dlg != null)
+            {
+              dlg.dismiss();
+            }
+            discoveryFailed(false);
+          }
+        }
+      }
+    };
+
+    try
+    {
+      HueDiscover.discover(listener, discoveryRun * 10000);
+    } catch (DiscoverException e)
+    {
+      Timber.d("Discover still running...");
+      return;
+    }
+
+    dlg.show(fragmentManager, DiscoverDlgFragmentTag);
+
+  }
+
+  @UiThread
+  protected void discoveryFailed(boolean canceled)
+  {
+    if (discoveryRun <= maxDiscoveryRuns && !canceled)
+    {
+      discoveryRun++;
+      //findBridge();
+      return;
+    }
+
+    /*new AlertDialog.Builder(this)
+        .setTitle("Hue Bridge not found")
+        .setMessage("Do you want to try again?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            discoveryRun = 1;
+            findBridge();
+          }
+        })
+        .setNegativeButton("No", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            System.exit(0);
+          }
+        })
+        .create()
+        .show();*/
   }
 
   private interface Validator
@@ -153,6 +305,78 @@ public class HueConfigureActivity extends ActionBarActivity
   {
     void onChanged(double value);
 
+  }
+
+  public static class DiscoverDialogFragment extends DialogFragment
+  {
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+      super.onCreate(savedInstanceState);
+      setRetainInstance(true);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      ProgressDialog discoverAlertDlg = new ProgressDialog(getActivity());
+      discoverAlertDlg.setIndeterminate(true);
+      discoverAlertDlg.setMessage("Trying to find your Hue Bridge");
+      discoverAlertDlg.setCancelable(true);
+
+      return discoverAlertDlg;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog)
+    {
+      super.onCancel(dialog);
+      HueDiscover.cancel();
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+      if (getDialog() != null && getRetainInstance())
+        getDialog().setDismissMessage(null);
+      super.onDestroyView();
+    }
+  }
+
+  public static class AuthenticateDialogFragment extends DialogFragment
+  {
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+      super.onCreate(savedInstanceState);
+      setRetainInstance(true);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState)
+    {
+      ProgressDialog authAlertDlg = new ProgressDialog(getActivity());
+      authAlertDlg.setIndeterminate(true);
+      authAlertDlg.setMessage("Please press the button on your bridge");
+      authAlertDlg.setCancelable(true);
+
+      return authAlertDlg;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog)
+    {
+      super.onCancel(dialog);
+      hueController.cancelAuthentication();
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+      if (getDialog() != null && getRetainInstance())
+        getDialog().setDismissMessage(null);
+      super.onDestroyView();
+    }
   }
 
   private class SeekbarSettings

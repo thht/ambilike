@@ -36,7 +36,7 @@ import timber.log.Timber;
  */
 
 @EService
-public class HueNotificationService extends Service
+public class HueService extends Service
 {
   private final IBinder mBinder = new LocalBinder();
 
@@ -56,6 +56,9 @@ public class HueNotificationService extends Service
   public void onCreate()
   {
     super.onCreate();
+
+    //preferences.clear();
+    
     hueNotification.setNotificationText("Started");
     hueNotification.setBrightness(preferences.Brightness().get());
 
@@ -98,7 +101,16 @@ public class HueNotificationService extends Service
     super.onStartCommand(intent, flags, startId);
     Timber.d("HueNotificationservice started...");
     startForeground(R.integer.hue_notification, hueNotification.getNotification());
+
+    connect();
+    
     return START_STICKY;
+  }
+
+  void connect()
+  {
+    hueController.connect();
+    
   }
 
   @Override

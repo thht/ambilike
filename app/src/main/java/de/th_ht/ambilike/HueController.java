@@ -19,16 +19,23 @@
 package de.th_ht.ambilike;
 
 import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.List;
+import java.util.UUID;
 
+import de.th_ht.libhue.Errors.URLInvalid;
 import de.th_ht.libhue.Hue;
 import de.th_ht.libhue.HueLightGroup;
+import timber.log.Timber;
 
 /**
  * Created by th on 02.03.2015.
@@ -40,8 +47,11 @@ public class HueController
   Hue hue;
   @SystemService
   ActivityManager am;
+
   @Pref
   HuePreferences_ preferences;
+  @RootContext
+  Context context;
   private int transition;
   private float colorExp;
   private int briMult;
@@ -49,20 +59,38 @@ public class HueController
   private int maxBri;
   private HueLightGroup lights;
 
-  HueController()
+  @AfterInject
+  void init()
   {
     hue = Hue.getInstance();
+    hue.setHueListener(new HueListener(context, preferences));
     transition = (int) (preferences.Transitiontime().get() * 1000);
     colorExp = preferences.Colorfullness().get();
     briMult = preferences.Brightness().get();
     minBri = preferences.MinBrightness().get();
     maxBri = preferences.MaxBrightness().get();
+
   }
 
   public void connect()
   {
+    try
+    {
+      String url = preferences.HueURL().get();
+      hue.setURL(preferences.HueURL().get(), preferences.HueUsername().getOr(UUID.randomUUID().toString()));
+    } catch (URLInvalid error)
+    {
+      Timber.d("URL invalid...");
+      HueConfigureActivity_.intent(context).extra(HueConfigureActivity.EXTRA_INTENT, HueConfigureActivity.CALL_FIND_BRIDGE).flags(Intent.FLAG_ACTIVITY_NEW_TASK).start();
+      return;
+    }
 
+    hue.connect();
+  }
 
+  public void cancelAuthentication()
+  {
+    hue.cancelAuthenticate();
   }
 
   public void setColor(int[] rgb, int brightness)

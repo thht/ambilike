@@ -20,12 +20,13 @@ package de.th_ht.ambilike;
 
 import org.androidannotations.annotations.sharedpreferences.DefaultFloat;
 import org.androidannotations.annotations.sharedpreferences.DefaultInt;
+import org.androidannotations.annotations.sharedpreferences.DefaultString;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 /**
  * Created by th on 02.03.2015.
  */
-@SharedPref
+@SharedPref(value = SharedPref.Scope.UNIQUE)
 public interface HuePreferences
 {
   @DefaultInt(100)
@@ -42,4 +43,10 @@ public interface HuePreferences
 
   @DefaultInt(255)
   int MaxBrightness();
+
+  @DefaultString("")
+  String HueUsername();
+
+  @DefaultString("xxx")
+  String HueURL();
 }

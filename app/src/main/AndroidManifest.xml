@@ -33,7 +33,7 @@
             android:label="Configure"
             android:noHistory="true"></activity>
 
-        <service android:name=".HueNotificationService_"></service>
+        <service android:name=".HueService_"></service>
 
         <receiver android:name=".HueNotificationReceiver_"/>
 

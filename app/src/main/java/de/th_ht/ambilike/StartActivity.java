@@ -30,7 +30,7 @@ public class StartActivity extends Activity
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
-    HueNotificationService_.intent(getApplication()).start();
+    HueService_.intent(getApplication()).start();
     finish();
   }
 }
