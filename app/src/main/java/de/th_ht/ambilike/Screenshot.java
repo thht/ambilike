@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -62,7 +63,8 @@ public class Screenshot implements Serializable
     try
     {
       semaphore.acquire();
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
     }
@@ -74,7 +76,8 @@ public class Screenshot implements Serializable
         try
         {
           sh = Runtime.getRuntime().exec("su", null, null);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
           e.printStackTrace();
         }
@@ -85,7 +88,8 @@ public class Screenshot implements Serializable
     try
     {
       shellThread.join();
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
     }
@@ -114,7 +118,8 @@ public class Screenshot implements Serializable
       {
         Thread.sleep(50);
       }
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
       semaphore.release();
@@ -144,7 +149,8 @@ public class Screenshot implements Serializable
     {
       infile = new File(myFilesDir + "/test.raw");
       in = new BufferedInputStream(new FileInputStream(infile));
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
       return false;
@@ -156,7 +162,8 @@ public class Screenshot implements Serializable
     {
       in.skip(12);
       in.read(allbytes, 0, nBytes);
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
       return false;
@@ -174,7 +181,8 @@ public class Screenshot implements Serializable
       semaphore.acquire();
       view.setImageBitmap(shot);
       semaphore.release();
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
     }
   }
@@ -198,7 +206,8 @@ public class Screenshot implements Serializable
       {
         curSwatch = pal.getVibrantSwatch();
         maxpop = curSwatch.getPopulation();
-      } catch (Exception e2)
+      }
+      catch (Exception e2)
       {
 
       }
@@ -215,14 +224,16 @@ public class Screenshot implements Serializable
       try
       {
         clr = curSwatch.getRgb();
-      } catch (NullPointerException e)
+      }
+      catch (NullPointerException e)
       {
         clr = oldClr;
       }
       oldClr = clr;
 
       semaphore.release();
-    } catch (Exception e)
+    }
+    catch (Exception e)
     {
       e.printStackTrace();
       semaphore.release();
@@ -231,5 +242,4 @@ public class Screenshot implements Serializable
 
     return clr;
   }
-
 }

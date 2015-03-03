@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,19 +33,20 @@ public class HueListener implements de.th_ht.libhue.HueListener
   private static int flags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP;
   Context context;
   HuePreferences_ preferences;
+  HueController hueController;
 
-  public HueListener(Context context, HuePreferences_ preferences)
+  public HueListener(Context context, HuePreferences_ preferences, HueController hueController)
   {
     this.context = context;
     this.preferences = preferences;
+    this.hueController = hueController;
   }
 
   @Override
   public void onNotAuthenticated(Hue hue)
   {
     Timber.d("onNotAuth...");
-    HueConfigureActivity_.intent(context).extra(HueConfigureActivity.EXTRA_INTENT, HueConfigureActivity.CALL_AUTHENTICATE).flags(flags).start();
-    hue.tryAuthenticate();
+    hueController.authenticate();
   }
 
   @Override
@@ -63,14 +65,16 @@ public class HueListener implements de.th_ht.libhue.HueListener
   public void onAuthenticated(Hue hue, String username)
   {
     Timber.d("onAuthenticated");
-    HueConfigureActivity_.intent(context).extra(HueConfigureActivity.EXTRA_INTENT, HueConfigureActivity.DISMISS_AUTHENTICATE).flags(flags).start();
+    HueConfigureActivity.dismissAuthenticate(context);
     preferences.edit().HueUsername().put(username).apply();
   }
 
   @Override
   public void onAuthenticationFailed(Hue hue, String reason, Exception exception)
   {
-    HueConfigureActivity_.intent(context).extra(HueConfigureActivity.EXTRA_INTENT, HueConfigureActivity.DISMISS_AUTHENTICATE).flags(flags).start();
+    Timber.d("Authentication failed");
+    HueConfigureActivity.dismissAuthenticate(context);
+    HueConfigureActivity.showAuthFailed(context);
   }
 
   @Override

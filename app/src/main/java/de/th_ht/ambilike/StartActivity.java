@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify

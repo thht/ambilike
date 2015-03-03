@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +21,6 @@ package de.th_ht.ambilike;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 
 import org.androidannotations.annotations.AfterInject;
@@ -32,8 +32,10 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import java.util.List;
 import java.util.UUID;
 
+import de.th_ht.libhue.Errors.DiscoverException;
 import de.th_ht.libhue.Errors.URLInvalid;
 import de.th_ht.libhue.Hue;
+import de.th_ht.libhue.HueDiscover;
 import de.th_ht.libhue.HueLightGroup;
 import timber.log.Timber;
 
@@ -63,13 +65,12 @@ public class HueController
   void init()
   {
     hue = Hue.getInstance();
-    hue.setHueListener(new HueListener(context, preferences));
+    hue.setHueListener(new HueListener(context, preferences, this));
     transition = (int) (preferences.Transitiontime().get() * 1000);
     colorExp = preferences.Colorfullness().get();
     briMult = preferences.Brightness().get();
     minBri = preferences.MinBrightness().get();
     maxBri = preferences.MaxBrightness().get();
-
   }
 
   public void connect()
@@ -77,11 +78,13 @@ public class HueController
     try
     {
       String url = preferences.HueURL().get();
-      hue.setURL(preferences.HueURL().get(), preferences.HueUsername().getOr(UUID.randomUUID().toString()));
-    } catch (URLInvalid error)
+      hue.setURL(preferences.HueURL().get(), preferences.HueUsername().getOr(UUID.randomUUID()
+          .toString()));
+    }
+    catch (URLInvalid error)
     {
       Timber.d("URL invalid...");
-      HueConfigureActivity_.intent(context).extra(HueConfigureActivity.EXTRA_INTENT, HueConfigureActivity.CALL_FIND_BRIDGE).flags(Intent.FLAG_ACTIVITY_NEW_TASK).start();
+      findBridge();
       return;
     }
 
@@ -93,6 +96,72 @@ public class HueController
     hue.cancelAuthenticate();
   }
 
+
+  void findBridge()
+  {
+    Timber.d("Find Bridge...");
+    final boolean doNUPNP = true;
+    HueDiscover.HueDiscoverListener listener = new HueDiscover.HueDiscoverListener()
+    {
+      boolean _doNUPNP;
+
+      {
+        _doNUPNP = doNUPNP;
+      }
+
+      @Override
+      public void devicesFound(List<HueDiscover.Device> devices)
+      {
+        Timber.d("Found " + devices.size() + " devices");
+        if (devices.size() > 0)
+        {
+          HueConfigureActivity.dismissFindBridge(context);
+
+          Timber.d("Device has url: " + devices.get(0).url);
+
+          preferences.edit().HueURL().put(devices.get(0).url).apply();
+          connect();
+        }
+        else
+        {
+          if (_doNUPNP)
+          {
+            HueDiscover.discoverNUPNP(this);
+            _doNUPNP = false;
+          }
+          else
+          {
+            HueConfigureActivity.dismissFindBridge(context);
+            discoveryFailed();
+          }
+        }
+      }
+    };
+
+    try
+    {
+      HueDiscover.discover(listener, 10000);
+    }
+    catch (DiscoverException e)
+    {
+      Timber.d("Discover still running...");
+      return;
+    }
+
+    HueConfigureActivity.showFindBridge(context);
+  }
+
+  void authenticate()
+  {
+    HueConfigureActivity.showAuthenticate(context);
+    hue.tryAuthenticate();
+  }
+
+  void discoveryFailed()
+  {
+    HueConfigureActivity.showFindBridgeFailed(context);
+  }
+
   public void setColor(int[] rgb, int brightness)
   {
     try
@@ -100,9 +169,13 @@ public class HueController
       // Convert Values...
       brightness = brightness * (briMult / 100);
       if (brightness > maxBri)
+      {
         brightness = maxBri;
+      }
       if (brightness < minBri)
+      {
         brightness = minBri;
+      }
 
       boolean needsLeveling = false;
       float maxrgb = 0;
@@ -110,9 +183,13 @@ public class HueController
       {
         rgb[i] = (int) Math.pow(rgb[i], colorExp);
         if (maxrgb < rgb[i])
+        {
           maxrgb = rgb[i];
+        }
         if (rgb[i] > 255)
+        {
           needsLeveling = true;
+        }
       }
 
       if (needsLeveling)
@@ -131,7 +208,9 @@ public class HueController
       List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
       boolean isNetflix = false;
       if (taskInfo.get(0).topActivity.getClassName().contains(".netflix."))
+      {
         isNetflix = true;
+      }
 
       if (isNetflix)
       {
@@ -142,8 +221,8 @@ public class HueController
 
       lights.setRGB(Color.rgb(rgb[0], rgb[1], rgb[2]));
       lights.postUpdate();
-
-    } catch (NullPointerException e)
+    }
+    catch (NullPointerException e)
     {
     }
   }
@@ -201,5 +280,10 @@ public class HueController
   public void setBriMult(int briMult)
   {
     this.briMult = briMult;
+  }
+
+  public void terminate()
+  {
+    HueService.terminate(context);
   }
 }

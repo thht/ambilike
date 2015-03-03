@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,7 +33,8 @@ import java.util.List;
  */
 public class HueNotificationView extends RemoteViews
 {
-  private final List<Integer> buttons = new ArrayList<>(Arrays.asList(R.id.buttonStartStop, R.id.buttonBrighter, R.id.buttonDarker, R.id.buttonConfigure));
+  private final List<Integer> buttons = new ArrayList<>(Arrays.asList(R.id.buttonStartStop,
+      R.id.buttonBrighter, R.id.buttonDarker, R.id.buttonConfigure));
   private Context app_context;
 
   public HueNotificationView(Context _app_context)
@@ -45,7 +47,8 @@ public class HueNotificationView extends RemoteViews
   {
     for (int i : buttons)
     {
-      setOnClickPendingIntent(i, PendingIntent.getBroadcast(app_context, i, new Intent(_intent).putExtra("ID", i), PendingIntent.FLAG_UPDATE_CURRENT));
+      setOnClickPendingIntent(i, PendingIntent.getBroadcast(app_context, i,
+          new Intent(_intent).putExtra("ID", i), PendingIntent.FLAG_UPDATE_CURRENT));
     }
   }
 
@@ -57,8 +60,5 @@ public class HueNotificationView extends RemoteViews
   public void setBrightnessText(String text)
   {
     setTextViewText(R.id.textViewBrightness, text);
-
   }
-
-
 }

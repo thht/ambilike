@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -38,8 +39,10 @@ public class HueOld
     @Override
     public void onAccessPointsFound(List accessPoint)
     {
-      // Handle your bridge search results here.  Typically if multiple results are returned you will want to display them in a list
-      // and let the user select their bridge.   If one is found you may opt to connect automatically to that bridge.
+      // Handle your bridge search results here.  Typically if multiple results are returned you 
+      will want to display them in a list
+      // and let the user select their bridge.   If one is found you may opt to connect 
+      automatically to that bridge.
       doToast("Bridge found", Toast.LENGTH_SHORT);
       PHAccessPoint ap = (PHAccessPoint) accessPoint.get(0);
       ap.setUsername(username);
@@ -62,7 +65,8 @@ public class HueOld
     @Override
     public void onCacheUpdated(List cacheNotificationsList, PHBridge bridge)
     {
-      // Here you receive notifications that the BridgeResource Cache was updated. Use the PHMessageType to
+      // Here you receive notifications that the BridgeResource Cache was updated. Use the 
+      PHMessageType to
       // check which cache was updated, e.g.
       if (cacheNotificationsList.contains(PHMessageType.LIGHTS_CACHE_UPDATED))
       {
@@ -89,9 +93,12 @@ public class HueOld
       });
 
 
-      // Here it is recommended to set your connected bridge in your sdk object (as above) and start the heartbeat.
-      // At this point you are connected to a bridge so you should pass control to your main program/activity.
-      // Also it is recommended you store the connected IP Address/ Username in your app here.  This will allow easy automatic connection on subsequent use.
+      // Here it is recommended to set your connected bridge in your sdk object (as above) and 
+      start the heartbeat.
+      // At this point you are connected to a bridge so you should pass control to your main 
+      program/activity.
+      // Also it is recommended you store the connected IP Address/ Username in your app here.  
+      This will allow easy automatic connection on subsequent use.
     }
 
     @Override
@@ -115,14 +122,16 @@ public class HueOld
     @Override
     public void onError(int code, final String message)
     {
-      // Here you can handle events such as Bridge Not Responding, Authentication Failed and Bridge Not Found
+      // Here you can handle events such as Bridge Not Responding, 
+      Authentication Failed and Bridge Not Found
       doToast("Hue Error: " + message, Toast.LENGTH_SHORT);
     }
 
     @Override
     public void onParsingErrors(List parsingErrorsList)
     {
-      // Any JSON parsing errors are returned here.  Typically your program should never return these.
+      // Any JSON parsing errors are returned here.  Typically your program should never return 
+      these.
     }
 
     private void doToast(final String text, final int length)
@@ -180,7 +189,8 @@ public class HueOld
     }
     Toast.makeText(appContext, "Connecting to bridge", Toast.LENGTH_LONG).show();
 
-    PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK.SEARCH_BRIDGE);
+    PHBridgeSearchManager sm = (PHBridgeSearchManager) phHueSDK.getSDKService(PHHueSDK
+    .SEARCH_BRIDGE);
     sm.search(true, true);
 
   }

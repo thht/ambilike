@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -90,7 +91,6 @@ public class HueNotification
   public void cancelNotification()
   {
     n_mgr.cancel(notificationID);
-
   }
 
   public void intentReceived(Intent intent)
@@ -124,8 +124,9 @@ public class HueNotification
   protected void ListenerRun(Runnable listener)
   {
     if (listener != null)
+    {
       listener.run();
-
+    }
   }
 
   private void fillListenerMap()
@@ -164,7 +165,6 @@ public class HueNotification
   {
     n_view.setText(text);
     updateNotification();
-
   }
 
   public int getBrightness()

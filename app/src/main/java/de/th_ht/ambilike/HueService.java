@@ -1,5 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
+ * * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +21,7 @@ package de.th_ht.ambilike;
 
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -52,13 +54,19 @@ public class HueService extends Service
   @Pref
   HuePreferences_ preferences;
 
+  public static void terminate(Context context)
+  {
+    HueService_.intent(context).stop();
+    System.exit(0);
+  }
+
   @Override
   public void onCreate()
   {
     super.onCreate();
 
-    //preferences.clear();
-    
+    preferences.clear();
+
     hueNotification.setNotificationText("Started");
     hueNotification.setBrightness(preferences.Brightness().get());
 
@@ -79,7 +87,8 @@ public class HueService extends Service
         Timber.d("Configure");
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         getApplicationContext().sendBroadcast(it);
-        startActivity(new Intent(getApplicationContext(), HueConfigureActivity_.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(getApplicationContext(), HueConfigureActivity_.class).setFlags
+            (Intent.FLAG_ACTIVITY_NEW_TASK));
       }
     });
 
@@ -103,14 +112,22 @@ public class HueService extends Service
     startForeground(R.integer.hue_notification, hueNotification.getNotification());
 
     connect();
-    
+
     return START_STICKY;
+  }
+
+  @Override
+  public void onDestroy()
+  {
+    Timber.d("HueService destroyed");
+    stopForeground(true);
+    super.onDestroy();
   }
 
   void connect()
   {
     hueController.connect();
-    
+
   }
 
   @Override
@@ -118,7 +135,7 @@ public class HueService extends Service
   {
     return mBinder;
   }
-
+  
   public class LocalBinder extends Binder
   {
   }
