@@ -34,12 +34,15 @@ public class HueListener implements de.th_ht.libhue.HueListener
   Context context;
   HuePreferences_ preferences;
   HueController hueController;
+  HueNotification hueNotification;
 
-  public HueListener(Context context, HuePreferences_ preferences, HueController hueController)
+  public HueListener(Context context, HuePreferences_ preferences, HueController hueController,
+                     HueNotification hueNotification)
   {
     this.context = context;
     this.preferences = preferences;
     this.hueController = hueController;
+    this.hueNotification = hueNotification;
   }
 
   @Override
@@ -59,6 +62,7 @@ public class HueListener implements de.th_ht.libhue.HueListener
   public void onConnect(Hue hue)
   {
     Timber.d("onConnect");
+    hueNotification.setNotificationText("Stopped");
   }
 
   @Override

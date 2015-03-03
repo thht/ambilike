@@ -67,7 +67,7 @@ public class HueService extends Service
 
     preferences.clear();
 
-    hueNotification.setNotificationText("Started");
+    hueNotification.setNotificationText("Initialising");
     hueNotification.setBrightness(preferences.Brightness().get());
 
     hueNotification.setStartStopListener(new Runnable()

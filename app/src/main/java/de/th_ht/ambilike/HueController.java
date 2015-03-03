@@ -24,6 +24,7 @@ import android.content.Context;
 import android.graphics.Color;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
@@ -52,6 +53,10 @@ public class HueController
 
   @Pref
   HuePreferences_ preferences;
+
+  @Bean
+  HueNotification hueNotification;
+  
   @RootContext
   Context context;
   private int transition;
@@ -65,7 +70,7 @@ public class HueController
   void init()
   {
     hue = Hue.getInstance();
-    hue.setHueListener(new HueListener(context, preferences, this));
+    hue.setHueListener(new HueListener(context, preferences, this, hueNotification));
     transition = (int) (preferences.Transitiontime().get() * 1000);
     colorExp = preferences.Colorfullness().get();
     briMult = preferences.Brightness().get();
