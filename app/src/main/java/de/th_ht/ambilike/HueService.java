@@ -65,7 +65,7 @@ public class HueService extends Service
   {
     super.onCreate();
 
-    preferences.clear();
+    //preferences.clear();
 
     hueNotification.setNotificationText("Initialising");
     hueNotification.setBrightness(preferences.Brightness().get());

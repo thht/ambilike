@@ -30,18 +30,27 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterExtras;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import de.th_ht.libhue.HueDiscover;
+import de.th_ht.libhue.HueLight;
+import timber.log.Timber;
 
 import static java.lang.Math.round;
 
@@ -63,6 +72,7 @@ public class HueConfigureActivity extends ActionBarActivity
   static final String AuthenticateDlgFragmentTag = "AuthDialog";
   static final String AuthenticationFailedDlgFragmentTag = "AuthFailedDialog";
   static final String RootFailedDlgFragmentTag = "RootFailedDialog";
+  static final String IsConnectedAction = "IsConnected";
   static int intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP;
   @Bean
   static
@@ -91,6 +101,9 @@ public class HueConfigureActivity extends ActionBarActivity
   TextView textConfigureMinBrightness;
   @ViewById
   TextView textConfigureMaxBrightness;
+
+  @ViewById
+  Button buttonConfigureLights;
 
   SeekbarSettings transitionSettings, colorfulnessSettings, minBrightnessSettings,
       maxBrightnessSettings;
@@ -137,6 +150,84 @@ public class HueConfigureActivity extends ActionBarActivity
   public static void showRootFailed(Context context)
   {
     HueConfigureActivity_.intent(context).showDialog(SHOW_ROOT_FAILED).flags(intentFlags).start();
+  }
+
+  @Click
+  void buttonConfigureLights()
+  {
+    Set<String> curLights = preferences.Lights().getOr(new HashSet<String>());
+    Map<Integer, HueLight> allLights = hueController.getAllLights();
+
+    CharSequence[] lights_strings = new CharSequence[allLights.size()];
+    final boolean[] lights_checked = new boolean[allLights.size()];
+
+    int counter = 0;
+    for (int i : allLights.keySet())
+    {
+      lights_strings[counter] = allLights.get(i).getName();
+      if (curLights.contains(String.valueOf(i)))
+      {
+        lights_checked[counter] = true;
+      }
+
+      counter++;
+    }
+
+    new AlertDialog.Builder(this)
+        .setTitle("Please choose lights")
+        .setMultiChoiceItems(lights_strings, lights_checked, new DialogInterface
+            .OnMultiChoiceClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i, boolean b)
+          {
+            lights_checked[i] = b;
+          }
+        })
+        .setPositiveButton("Ok", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            Set<String> lights_chosen = new HashSet<String>();
+            for (int j = 0; j < lights_checked.length; j++)
+            {
+              if (lights_checked[j])
+              {
+                lights_chosen.add(Integer.toString(j + 1));
+              }
+            }
+
+            hueController.setLights(lights_chosen);
+            preferences.edit().Lights().put(lights_chosen).apply();
+          }
+        })
+        .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+          }
+        })
+        .show();
+  }
+
+  @Click
+  void buttonConfigureBridge()
+  {
+    new AlertDialog.Builder(this)
+        .setMessage("Do you want to do a new search for the Bridge?")
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialogInterface, int i)
+          {
+            buttonConfigureLights.setEnabled(false);
+            hueController.findBridge();
+          }
+        })
+        .setNegativeButton("No", null)
+        .show();
   }
 
   @Override
@@ -221,6 +312,15 @@ public class HueConfigureActivity extends ActionBarActivity
         return true;
       }
     });
+
+    if (hueController.isConnected())
+    {
+      buttonConfigureLights.setEnabled(true);
+    }
+    else
+    {
+      buttonConfigureLights.setEnabled(false);
+    }
   }
 
   @AfterExtras
@@ -279,6 +379,14 @@ public class HueConfigureActivity extends ActionBarActivity
     {
       setIntent(getIntent().putExtra("showDialog", 0));
     }
+  }
+
+  @Receiver(actions = HueConfigureActivity.IsConnectedAction, local = true, registerAt = Receiver
+      .RegisterAt.OnCreateOnDestroy)
+  void isConnectedReceiver()
+  {
+    Timber.d("Intent received");
+    buttonConfigureLights.setEnabled(hueController.isConnected());
   }
 
   private interface Validator

@@ -33,6 +33,11 @@ public class HueLight extends HueLightObject
 
   }
 
+  public String getName()
+  {
+    return state.name;
+  }
+
   protected void setUpdate(HueRestInterface.LightUpdate update)
   {
     this.curUpdate = update;

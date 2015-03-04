@@ -21,6 +21,7 @@ package de.th_ht.ambilike;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import de.th_ht.libhue.Hue;
 import timber.log.Timber;
@@ -55,7 +56,10 @@ public class HueListener implements de.th_ht.libhue.HueListener
   @Override
   public void onConnectFailed(Hue hue, Exception exception)
   {
+    hueController.isConnected = false;
     Timber.d("onConnectFailed");
+    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(HueConfigureActivity
+        .IsConnectedAction));
   }
 
   @Override
@@ -63,6 +67,10 @@ public class HueListener implements de.th_ht.libhue.HueListener
   {
     Timber.d("onConnect");
     hueNotification.setNotificationText("Stopped");
+    hueController.isConnected = true;
+    hueController.setLights(preferences.Lights().get());
+    LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(HueConfigureActivity
+        .IsConnectedAction));
   }
 
   @Override

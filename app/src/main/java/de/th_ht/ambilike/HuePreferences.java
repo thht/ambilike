@@ -24,6 +24,8 @@ import org.androidannotations.annotations.sharedpreferences.DefaultInt;
 import org.androidannotations.annotations.sharedpreferences.DefaultString;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
+import java.util.Set;
+
 /**
  * Created by th on 02.03.2015.
  */
@@ -50,4 +52,6 @@ public interface HuePreferences
 
   @DefaultString("xxx")
   String HueURL();
+
+  Set<String> Lights();
 }

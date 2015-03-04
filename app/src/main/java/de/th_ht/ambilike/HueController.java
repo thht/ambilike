@@ -34,12 +34,15 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import de.th_ht.libhue.Errors.DiscoverException;
 import de.th_ht.libhue.Errors.URLInvalid;
 import de.th_ht.libhue.Hue;
 import de.th_ht.libhue.HueDiscover;
+import de.th_ht.libhue.HueLight;
 import de.th_ht.libhue.HueLightGroup;
 import timber.log.Timber;
 
@@ -50,16 +53,14 @@ import timber.log.Timber;
 @EBean(scope = EBean.Scope.Singleton)
 public class HueController
 {
+  protected boolean isConnected;
   Hue hue;
   @SystemService
   ActivityManager am;
-
   @Pref
   HuePreferences_ preferences;
-
   @Bean
   HueNotification hueNotification;
-  
   @RootContext
   Context context;
   private int transition;
@@ -79,6 +80,7 @@ public class HueController
     briMult = preferences.Brightness().get();
     minBri = preferences.MinBrightness().get();
     maxBri = preferences.MaxBrightness().get();
+    isConnected = false;
   }
 
   @Background
@@ -96,6 +98,7 @@ public class HueController
 
   public void connect()
   {
+    isConnected = false;
     try
     {
       String url = preferences.HueURL().get();
@@ -120,6 +123,7 @@ public class HueController
 
   void findBridge()
   {
+    isConnected = false;
     Timber.d("Find Bridge...");
     final boolean doNUPNP = true;
     HueDiscover.HueDiscoverListener listener = new HueDiscover.HueDiscoverListener()
@@ -293,6 +297,22 @@ public class HueController
     this.lights = lights;
   }
 
+  public void setLights(Set<String> lights)
+  {
+    if (lights == null || lights.isEmpty())
+    {
+      return;
+    }
+
+    Map<Integer, HueLight> allLights = hue.getAllLights();
+    this.lights = new HueLightGroup();
+
+    for (String curid : lights)
+    {
+      this.lights.addLight(allLights.get(Integer.parseInt(curid)));
+    }
+  }
+
   public int getBriMult()
   {
     return briMult;
@@ -301,6 +321,21 @@ public class HueController
   public void setBriMult(int briMult)
   {
     this.briMult = briMult;
+  }
+
+  public Map<Integer, HueLight> getAllLights()
+  {
+    if (!isConnected)
+    {
+      return null;
+    }
+
+    return hue.getAllLights();
+  }
+
+  public boolean isConnected()
+  {
+    return isConnected;
   }
 
   public void terminate()
