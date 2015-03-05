@@ -63,7 +63,7 @@ public class HueController
   HueNotification hueNotification;
   @RootContext
   Context context;
-  private int transition;
+  private float transition;
   private float colorExp;
   private int briMult;
   private int minBri;
@@ -75,7 +75,7 @@ public class HueController
   {
     hue = Hue.getInstance();
     hue.setHueListener(new HueListener(context, preferences, this, hueNotification));
-    transition = (int) (preferences.Transitiontime().get() * 1000);
+    transition = preferences.Transitiontime().get();
     colorExp = preferences.Colorfullness().get();
     briMult = preferences.Brightness().get();
     minBri = preferences.MinBrightness().get();
@@ -187,7 +187,7 @@ public class HueController
     try
     {
       // Convert Values...
-      brightness = brightness * (briMult / 100);
+      brightness = (int) (brightness * (briMult / 100.0));
       if (brightness > maxBri)
       {
         brightness = maxBri;
@@ -223,7 +223,7 @@ public class HueController
 
       lights.startUpdate();
       lights.setBrightness(brightness);
-      lights.setTransitiontime(transition);
+      lights.setTransitiontime((int) (transition * 1000));
 
       List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
       boolean isNetflix = false;
@@ -247,12 +247,12 @@ public class HueController
     }
   }
 
-  public int getTransition()
+  public float getTransition()
   {
     return transition;
   }
 
-  public void setTransition(int transition)
+  public void setTransition(float transition)
   {
     this.transition = transition;
   }

@@ -245,7 +245,7 @@ public class HueConfigureActivity extends ActionBarActivity
       @Override
       public void onChanged(double value)
       {
-        hueController.setTransition((int) (value * 1000));
+        hueController.setTransition((float) value);
         preferences.edit().Transitiontime().put((float) value).apply();
       }
     });
