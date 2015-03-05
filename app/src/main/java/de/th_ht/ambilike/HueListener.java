@@ -23,8 +23,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import de.th_ht.libhue.Hue;
-import timber.log.Timber;
 
 /**
  * Created by th on 02.03.2015.
@@ -36,6 +38,7 @@ public class HueListener implements de.th_ht.libhue.HueListener
   HuePreferences_ preferences;
   HueController hueController;
   HueNotification hueNotification;
+  ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
   public HueListener(Context context, HuePreferences_ preferences, HueController hueController,
                      HueNotification hueNotification)
@@ -44,12 +47,12 @@ public class HueListener implements de.th_ht.libhue.HueListener
     this.preferences = preferences;
     this.hueController = hueController;
     this.hueNotification = hueNotification;
+    scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
   }
 
   @Override
   public void onNotAuthenticated(Hue hue)
   {
-    Timber.d("onNotAuth...");
     hueController.authenticate();
   }
 
@@ -57,15 +60,26 @@ public class HueListener implements de.th_ht.libhue.HueListener
   public void onConnectFailed(Hue hue, Exception exception)
   {
     hueController.isConnected = false;
-    Timber.d("onConnectFailed");
+    hueNotification.setNotificationText("Connection Failed");
     LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(HueConfigureActivity
         .IsConnectedAction));
+
+
+    scheduledThreadPoolExecutor.getQueue().clear();
+    scheduledThreadPoolExecutor.schedule(new Runnable()
+    {
+      @Override
+      public void run()
+      {
+        hueController.connect();
+      }
+    }
+        , 10, TimeUnit.SECONDS);
   }
 
   @Override
   public void onConnect(Hue hue)
   {
-    Timber.d("onConnect");
     hueNotification.setNotificationText("Stopped");
     hueController.isConnected = true;
     hueController.setLights(preferences.Lights().get());
@@ -76,7 +90,6 @@ public class HueListener implements de.th_ht.libhue.HueListener
   @Override
   public void onAuthenticated(Hue hue, String username)
   {
-    Timber.d("onAuthenticated");
     HueConfigureActivity.dismissAuthenticate(context);
     preferences.edit().HueUsername().put(username).apply();
   }
@@ -84,7 +97,6 @@ public class HueListener implements de.th_ht.libhue.HueListener
   @Override
   public void onAuthenticationFailed(Hue hue, String reason, Exception exception)
   {
-    Timber.d("Authentication failed");
     HueConfigureActivity.dismissAuthenticate(context);
     HueConfigureActivity.showAuthFailed(context);
   }
@@ -92,12 +104,11 @@ public class HueListener implements de.th_ht.libhue.HueListener
   @Override
   public void onConnectionLost(Hue hue, Exception exception)
   {
-    Timber.d("onConnectionLost");
   }
 
   @Override
   public void onConnectionResumed(Hue hue)
   {
-    Timber.d("onConnectionResumed");
+
   }
 }

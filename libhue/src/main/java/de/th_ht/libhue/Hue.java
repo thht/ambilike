@@ -15,7 +15,6 @@ import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import timber.log.Timber;
 
 public class Hue
 {
@@ -94,24 +93,29 @@ public class Hue
         try
         {
           updateAllLights();
-        } catch (RestReturnError e)
+        }
+        catch (RestReturnError e)
         {
           if (e.getResterror().type == 1)
           {
             hueListener.onNotAuthenticated(Hue.getInstance());
             return;
           }
-        } catch (RetrofitError e)
+        }
+        catch (RetrofitError e)
         {
           if (e.getCause() instanceof IOException)
           {
             hueListener.onConnectFailed(Hue.getInstance(), e);
             return;
-          } else if (e.getKind() == RetrofitError.Kind.HTTP || e.getKind() == RetrofitError.Kind.NETWORK)
+          }
+          else if (e.getKind() == RetrofitError.Kind.HTTP || e.getKind() == RetrofitError.Kind
+              .NETWORK)
           {
             hueListener.onConnectFailed(Hue.getInstance(), e);
             return;
-          } else
+          }
+          else
           {
             throw e;
           }
@@ -136,7 +140,8 @@ public class Hue
     try
     {
       responseList = hueRestInterface.createUser(new HueRestInterface.User(devicename, username));
-    } catch (RetrofitError e)
+    }
+    catch (RetrofitError e)
     {
       throw e;
     }
@@ -168,7 +173,9 @@ public class Hue
   public void tryAuthenticate(int timeout)
   {
     if (authThread != null)
+    {
       authThread.interrupt();
+    }
 
     authThread = new Thread(new AuthRunnable("", username, timeout));
     authThread.start();
@@ -177,7 +184,9 @@ public class Hue
   public void cancelAuthenticate()
   {
     if (authThread != null)
+    {
       authThread.interrupt();
+    }
   }
 
   public Map<Integer, HueLight> getAllLights()
@@ -187,12 +196,12 @@ public class Hue
 
   synchronized protected void updateAllLights() throws RestReturnError
   {
-    Timber.d("updateAllLights...");
     Map<String, HueRestInterface.LightState> retLights = null;
     try
     {
       retLights = hueRestInterface.getLights(username);
-    } catch (RetrofitError e)
+    }
+    catch (RetrofitError e)
     {
       if (e.getKind() == RetrofitError.Kind.CONVERSION)
       {
@@ -201,7 +210,8 @@ public class Hue
         if (resp.get(0).error != null)
         {
           throw new RestReturnError("updateAllLights failed", resp.get(0).error);
-        } else
+        }
+        else
         {
           throw e;
         }
@@ -210,16 +220,17 @@ public class Hue
       {
         connectionLost(e);
         throw e;
-      } else if (e.getKind() == RetrofitError.Kind.HTTP || e.getKind() == RetrofitError.Kind.NETWORK)
+      }
+      else if (e.getKind() == RetrofitError.Kind.HTTP || e.getKind() == RetrofitError.Kind.NETWORK)
       {
         connectionLost(e);
         throw e;
-      } else
+      }
+      else
       {
         // Something else is wrong....
         throw e;
       }
-
     }
 
     if (lights == null || lights.size() != retLights.size())
@@ -230,15 +241,14 @@ public class Hue
       {
         lights.put(Integer.parseInt(key), new HueLight(retLights.get(key), Integer.parseInt(key)));
       }
-    } else
+    }
+    else
     {
       for (String key : retLights.keySet())
       {
         lights.get(Integer.parseInt(key)).state = retLights.get(key);
       }
     }
-
-    Timber.d("New lights set...");
   }
 
   protected HueRestInterface.LightState getLightState(int id)
@@ -248,12 +258,12 @@ public class Hue
 
   protected void postUpdate(int id, HueRestInterface.LightUpdate newstate, final boolean doUpdate)
   {
-    hueRestInterface.setLightState(username, id, newstate, new Callback<List<HueRestInterface.PostPutResponse>>()
+    hueRestInterface.setLightState(username, id, newstate, new Callback<List<HueRestInterface
+        .PostPutResponse>>()
     {
       @Override
       public void success(List<HueRestInterface.PostPutResponse> responseList, Response response)
       {
-        Timber.d("In setlightstate callback");
         connectionResumed();
         if (doUpdate)
         {
@@ -265,7 +275,8 @@ public class Hue
               try
               {
                 updateAllLights();
-              } catch (RestReturnError e)
+              }
+              catch (RestReturnError e)
               {
               }
             }
@@ -279,13 +290,14 @@ public class Hue
         if (error.getCause() instanceof IOException)
         {
           connectionLost(error);
-        } else if (error.getKind() == RetrofitError.Kind.HTTP || error.getKind() == RetrofitError.Kind.NETWORK)
+        }
+        else if (error.getKind() == RetrofitError.Kind.HTTP || error.getKind() == RetrofitError
+            .Kind.NETWORK)
         {
           connectionLost(error);
         }
       }
     });
-
   }
 
   public String getUsername()
@@ -334,12 +346,14 @@ public class Hue
     {
       long starttime = System.nanoTime();
       String finalusername = "";
-      while (TimeUnit.SECONDS.convert(System.nanoTime() - starttime, TimeUnit.NANOSECONDS) < timeout)
+      while (TimeUnit.SECONDS.convert(System.nanoTime() - starttime, 
+          TimeUnit.NANOSECONDS) < timeout)
       {
         try
         {
           finalusername = _tryAuthenticate(devicename, username);
-        } catch (AuthenticateError error)
+        }
+        catch (AuthenticateError error)
         {
           if (error.getErrorcode() == 101)
           {
@@ -347,14 +361,16 @@ public class Hue
             try
             {
               Thread.sleep(1000L);
-            } catch (InterruptedException e)
+            }
+            catch (InterruptedException e)
             {
               hueListener.onAuthenticationFailed(Hue.getInstance(), "Aborted", e);
               return;
             }
             continue;
           }
-        } catch (RetrofitError error)
+        }
+        catch (RetrofitError error)
         {
           hueListener.onAuthenticationFailed(Hue.getInstance(), "Retrofit Error", error);
           connectionLost(error);
@@ -365,9 +381,11 @@ public class Hue
         try
         {
           updateAllLights();
-        } catch (RestReturnError error)
+        }
+        catch (RestReturnError error)
         {
-          hueListener.onAuthenticationFailed(Hue.getInstance(), "Error in return from the Bridge", error);
+          hueListener.onAuthenticationFailed(Hue.getInstance(), "Error in return from the " +
+              "Bridge", error);
         }
         hueListener.onAuthenticated(Hue.getInstance(), finalusername);
         hueListener.onConnect(Hue.getInstance());

@@ -32,15 +32,13 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.HashMap;
 
-import timber.log.Timber;
-
 /**
  * Created by th on 15.02.2015.
  */
 @EBean(scope = EBean.Scope.Singleton)
 public class HueNotification
 {
-  private final int maxBrightness = 150;
+  private final int maxBrightness = 250;
   private final int minBrightness = 0;
   private final int brightnessStep = 5;
   @RootContext
@@ -62,7 +60,6 @@ public class HueNotification
   {
     n_view = new HueNotificationView(context);
 
-    Timber.d("Creating HueNotification");
     notificationIcon = R.drawable.app_icon;
     notificationID = R.integer.hue_notification;
     brightness = 100;

@@ -25,13 +25,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-
-import timber.log.Timber;
 
 /**
  * Created by th on 17.02.2015.
@@ -54,6 +54,11 @@ public class HueService extends Service
   @Pref
   HuePreferences_ preferences;
 
+  @SystemService
+  WindowManager windowManager;
+
+  HueThread hueThread;
+
   public static void terminate(Context context)
   {
     HueService_.intent(context).stop();
@@ -75,7 +80,31 @@ public class HueService extends Service
       @Override
       public void run()
       {
-        Timber.d("Start/Stop Service");
+        if (hueThread == null && hueController.isConnected())
+        {
+          DisplayMetrics metrics = new DisplayMetrics();
+          windowManager.getDefaultDisplay().getMetrics(metrics);
+          hueThread = new HueThread(metrics.widthPixels, metrics.heightPixels,
+              getApplicationContext(), hueController);
+          hueThread.start();
+          hueNotification.setNotificationText("Running");
+        }
+        else
+        {
+          if (hueThread != null)
+          {
+            hueThread.terminate();
+          }
+          hueThread = null;
+          if (hueController.isConnected)
+          {
+            hueNotification.setNotificationText("Stopped");
+          }
+          else
+          {
+            hueNotification.setNotificationText("Connection Failed");
+          }
+        }
       }
     });
 
@@ -84,7 +113,6 @@ public class HueService extends Service
       @Override
       public void run()
       {
-        Timber.d("Configure");
         Intent it = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         getApplicationContext().sendBroadcast(it);
         startActivity(new Intent(getApplicationContext(), HueConfigureActivity_.class).setFlags
@@ -97,7 +125,6 @@ public class HueService extends Service
       @Override
       public void run()
       {
-        Timber.d("Brightness changed to " + hueNotification.getBrightness() + "%");
         hueController.setBriMult(hueNotification.getBrightness());
         preferences.edit().Brightness().put(hueNotification.getBrightness()).apply();
       }
@@ -108,7 +135,6 @@ public class HueService extends Service
   public int onStartCommand(Intent intent, int flags, int startId)
   {
     super.onStartCommand(intent, flags, startId);
-    Timber.d("HueNotificationservice started...");
     startForeground(R.integer.hue_notification, hueNotification.getNotification());
 
     connect();
@@ -119,8 +145,7 @@ public class HueService extends Service
   @Override
   public void onDestroy()
   {
-    Timber.d("HueService destroyed");
-    stopForeground(true);
+    //stopForeground(true);
     super.onDestroy();
   }
 

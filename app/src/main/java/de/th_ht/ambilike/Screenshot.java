@@ -54,7 +54,7 @@ public class Screenshot implements Serializable
     displayheight = _displayheight;
 
     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-    myFilesDir = settings.getString("MyFilesDir", "0");
+    myFilesDir = appContext.getExternalCacheDir().toString();
 
     cmdline = "/system/bin/screencap " + myFilesDir + "/test.raw\n";
     //cmdline = "/system/bin/screencap\n";

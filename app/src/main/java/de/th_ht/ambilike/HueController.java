@@ -98,6 +98,7 @@ public class HueController
 
   public void connect()
   {
+    Timber.d("connect");
     isConnected = false;
     try
     {
@@ -107,7 +108,6 @@ public class HueController
     }
     catch (URLInvalid error)
     {
-      Timber.d("URL invalid...");
       findBridge();
       return;
     }
@@ -124,7 +124,6 @@ public class HueController
   void findBridge()
   {
     isConnected = false;
-    Timber.d("Find Bridge...");
     final boolean doNUPNP = true;
     HueDiscover.HueDiscoverListener listener = new HueDiscover.HueDiscoverListener()
     {
@@ -137,12 +136,9 @@ public class HueController
       @Override
       public void devicesFound(List<HueDiscover.Device> devices)
       {
-        Timber.d("Found " + devices.size() + " devices");
         if (devices.size() > 0)
         {
           HueConfigureActivity.dismissFindBridge(context);
-
-          Timber.d("Device has url: " + devices.get(0).url);
 
           preferences.edit().HueURL().put(devices.get(0).url).apply();
           connect();
@@ -169,7 +165,6 @@ public class HueController
     }
     catch (DiscoverException e)
     {
-      Timber.d("Discover still running...");
       return;
     }
 
@@ -299,13 +294,13 @@ public class HueController
 
   public void setLights(Set<String> lights)
   {
+    this.lights = new HueLightGroup();
     if (lights == null || lights.isEmpty())
     {
       return;
     }
 
     Map<Integer, HueLight> allLights = hue.getAllLights();
-    this.lights = new HueLightGroup();
 
     for (String curid : lights)
     {

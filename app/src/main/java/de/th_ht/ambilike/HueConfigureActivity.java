@@ -50,7 +50,6 @@ import java.util.Set;
 
 import de.th_ht.libhue.HueDiscover;
 import de.th_ht.libhue.HueLight;
-import timber.log.Timber;
 
 import static java.lang.Math.round;
 
@@ -385,7 +384,6 @@ public class HueConfigureActivity extends ActionBarActivity
       .RegisterAt.OnCreateOnDestroy)
   void isConnectedReceiver()
   {
-    Timber.d("Intent received");
     buttonConfigureLights.setEnabled(hueController.isConnected());
   }
 
@@ -397,7 +395,6 @@ public class HueConfigureActivity extends ActionBarActivity
   public interface OnCustomSeekbarChangedListener
   {
     void onChanged(double value);
-
   }
 
   public static class AuthFailedDialogFragment extends DialogFragment
@@ -676,7 +673,6 @@ public class HueConfigureActivity extends ActionBarActivity
       double offset = -min;
 
       return (progress / factor) - offset;
-
     }
 
     public double getCurrent()
@@ -723,7 +719,6 @@ public class HueConfigureActivity extends ActionBarActivity
       }
 
       return true;
-
     }
 
     protected void update()
