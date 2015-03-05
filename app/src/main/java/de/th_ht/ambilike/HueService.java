@@ -19,6 +19,7 @@
 
 package de.th_ht.ambilike;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -37,6 +38,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
  * Created by th on 17.02.2015.
  */
 
+@SuppressLint("Registered")
 @EService
 public class HueService extends Service
 {

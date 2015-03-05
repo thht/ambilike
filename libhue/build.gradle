@@ -30,3 +30,12 @@ dependencies {
     compile 'org.eclipse.jetty:jetty-client:8.1.12.v20130726'
 }
 
+
+android {
+    lintOptions {
+        abortOnError false
+
+    }
+
+}
+

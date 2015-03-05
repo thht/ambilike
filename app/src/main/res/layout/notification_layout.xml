@@ -18,6 +18,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:gravity="center_vertical|center_horizontal|top"
@@ -29,7 +30,8 @@
         style="@android:style/Theme.DeviceDefault"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="None"/>
+        android:text="None"
+        tools:ignore="HardcodedText"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -41,7 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="Start/Stop"/>
+            android:text="Start/Stop"
+            tools:ignore="HardcodedText"/>
 
         <Button
             android:id="@+id/buttonConfigure"
@@ -49,7 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/buttonStartStop"
-            android:text="Configure..."/>
+            android:text="Configure..."
+            tools:ignore="HardcodedText"/>
 
         <Button
             android:id="@+id/buttonBrighter"
@@ -57,7 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/textViewBrightness"
-            android:text="+"/>
+            android:text="+"
+            tools:ignore="HardcodedText"/>
 
         <TextView
             android:id="@+id/textViewBrightness"
@@ -69,7 +74,8 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/buttonDarker"
             android:gravity="center_horizontal"
-            android:text="100%"/>
+            android:text="100%"
+            tools:ignore="HardcodedText"/>
 
         <Button
             android:id="@+id/buttonDarker"
@@ -77,7 +83,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="-"/>
+            android:text="-"
+            tools:ignore="HardcodedText"/>
     </RelativeLayout>
 
 </LinearLayout>

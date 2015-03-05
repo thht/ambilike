@@ -53,3 +53,12 @@ apt {
     }
 }
 
+
+android {
+    lintOptions {
+        abortOnError false
+
+    }
+
+}
+
