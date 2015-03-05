@@ -13,7 +13,7 @@ android:
     - android-21
     
 jdk:
-  - oraclejdk7
+  - oraclejdk8
   - openjdk7
  
 before_install:
