@@ -7,6 +7,12 @@ import android.graphics.Color;
  */
 public abstract class HueLightObject
 {
+  protected final double x1 = 0.674;
+  protected final double y1 = 0.322;
+  protected final double x2 = 0.408;
+  protected final double y2 = 0.517;
+  protected final double x3 = 0.168;
+  protected final double y3 = 0.041;
   protected HueRestInterface.LightUpdate curUpdate;
   protected Hue bridge;
 
@@ -48,6 +54,15 @@ public abstract class HueLightObject
     return this;
   }
 
+  public HueLightObject setXY(float[] xy)
+  {
+    Float[] tmp = new Float[2];
+    tmp[0] = xy[0];
+    tmp[1] = xy[1];
+    curUpdate.xy = tmp;
+    return this;
+  }
+
 
   public HueLightObject startUpdate()
   {
@@ -57,10 +72,28 @@ public abstract class HueLightObject
 
   public HueLightObject setRGB(int color)
   {
-    float[] hsv = new float[3];
-    Color.colorToHSV(color, hsv);
-    setHue((int) (hsv[0] * 65535 / 360));
-    setSaturation((int) (hsv[1] * 254));
+    double red = Color.red(color) / 255f;
+    double green = Color.green(color) / 255f;
+    double blue = Color.blue(color) / 255f;
+
+    red = (red > 0.04045f) ? Math.pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
+    green = (green > 0.04045f) ? Math.pow((green + 0.055f) / (1.0f + 0.055f),
+        2.4f) : (green / 12.92f);
+    blue = (blue > 0.04045f) ? Math.pow((blue + 0.055f) / (1.0f + 0.055f), 2.4f) : (blue / 12.92f);
+
+    double X = red * 0.649926f + green * 0.103455f + blue * 0.197109f;
+    double Y = red * 0.234327f + green * 0.743075f + blue * 0.022598f;
+    double Z = red * 0.0000000f + green * 0.053077f + blue * 1.035763f;
+
+    double x = X / (X + Y + Z);
+    double y = Y / (X + Y + Z);
+
+    float[] xy = new float[2];
+    xy[0] = (float) x;
+    xy[1] = (float) y;
+
+    setXY(xy);
+    
     return this;
   }
 }

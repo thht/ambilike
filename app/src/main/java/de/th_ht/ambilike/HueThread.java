@@ -27,8 +27,8 @@ import android.graphics.Color;
  */
 public class HueThread extends Thread
 {
+  protected boolean killed;
   HueController hueController;
-  private boolean killed;
   private Screenshot screenshot;
 
   public HueThread(int displaywidth, int displayheight, Context context,
