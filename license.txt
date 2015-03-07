@@ -10,6 +10,8 @@ GSON https://code.google.com/p/google-gson/ : Apache Licence 2.0
 Retrofit https://github.com/square/retrofit : Apache Licence 2.0
 Cling http://4thline.org/projects/cling/ : LGPL
 Jetty http://eclipse.org/jetty/ : Apache Licence 2.0
+The Icon is from http://www.iconarchive.com/show/plateau-icons-by-sbstnblnd/Apps-colors-icon.html
+ : GPL
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
