@@ -161,7 +161,7 @@ public class HueService extends Service
   {
     return mBinder;
   }
-  
+
   public class LocalBinder extends Binder
   {
   }
