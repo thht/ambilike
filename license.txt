@@ -1,3 +1,18 @@
+Ambilike is released under the GPL version 3 or later. You can find the exact license text at the end of this file.
+
+The software uses the following libraries and components:
+
+Android Support Library V7 by Google: Apache Licence 2.0
+RootShell https://github.com/Stericson/RootShell : Apache Licence 2.0
+Android Annotations https://github.com/excilys/androidannotations : Apache Licence 2.0
+Timber https://github.com/JakeWharton/timber : Apache Licence 2.0
+GSON https://code.google.com/p/google-gson/ : Apache Licence 2.0
+Retrofit https://github.com/square/retrofit : Apache Licence 2.0
+Cling http://4thline.org/projects/cling/ : LGPL
+Jetty http://eclipse.org/jetty/ : Apache Licence 2.0
+The Icon is from http://www.iconarchive.com/show/plateau-icons-by-sbstnblnd/Apps-colors-icon.html
+ : GPL
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

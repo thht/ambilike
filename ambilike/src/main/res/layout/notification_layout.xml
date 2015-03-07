@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android device
+  ~ Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:gravity="center_vertical|center_horizontal|top"
+              android:measureWithLargestChild="false"
+              android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textViewNotificationStatus"
+        style="@android:style/Theme.DeviceDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="None"
+        tools:ignore="HardcodedText"/>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/buttonStartStop"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Start/Stop"
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/buttonConfigure"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/buttonStartStop"
+            android:text="Configure..."
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/buttonBrighter"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/textViewBrightness"
+            android:text="+"
+            tools:ignore="HardcodedText"/>
+
+        <TextView
+            android:id="@+id/textViewBrightness"
+            style="@android:style/Theme.DeviceDefault"
+            android:layout_width="50sp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentTop="false"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/buttonDarker"
+            android:gravity="center_horizontal"
+            android:text="100%"
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/buttonDarker"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="-"
+            tools:ignore="HardcodedText"/>
+    </RelativeLayout>
+
+</LinearLayout>
