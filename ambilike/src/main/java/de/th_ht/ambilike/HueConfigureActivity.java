@@ -40,6 +40,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
@@ -55,6 +57,7 @@ import static java.lang.Math.round;
 
 @SuppressLint("Registered")
 @EActivity
+@OptionsMenu(R.menu.hue_configure_activity)
 public class HueConfigureActivity extends ActionBarActivity
 {
   static final int SHOW_FIND_BRIDGE = 1;
@@ -211,7 +214,7 @@ public class HueConfigureActivity extends ActionBarActivity
         .show();
   }
 
-  @Click
+  @OptionsItem(R.id.find_bridge)
   void buttonConfigureBridge()
   {
     new AlertDialog.Builder(this)

@@ -193,13 +193,4 @@
         </GridLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/buttonConfigureBridge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/buttonConfigureLights"
-        android:text="Bridge"
-        tools:ignore="HardcodedText"/>
-
 </RelativeLayout>
