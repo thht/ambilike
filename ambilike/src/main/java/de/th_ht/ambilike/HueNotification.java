@@ -60,7 +60,7 @@ public class HueNotification
   {
     n_view = new HueNotificationView(context);
 
-    notificationIcon = R.drawable.app_icon;
+    notificationIcon = R.drawable.notification_icon;
     notificationID = R.integer.hue_notification;
     brightness = 100;
 
