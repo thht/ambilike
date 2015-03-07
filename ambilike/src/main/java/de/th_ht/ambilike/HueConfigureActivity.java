@@ -30,6 +30,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -85,6 +87,8 @@ public class HueConfigureActivity extends ActionBarActivity
   HuePreferences_ preferences;
 
   FragmentManager fragmentManager = getFragmentManager();
+
+  AlertDialog aboutDialog = null;
 
   @ViewById
   SeekBar seekBarConfigureTransition;
@@ -229,6 +233,20 @@ public class HueConfigureActivity extends ActionBarActivity
           }
         })
         .setNegativeButton("No", null)
+        .show();
+  }
+
+  @OptionsItem(R.id.about)
+  void showAbout()
+  {
+    TextView msg = new TextView(this);
+    msg.setText(Html.fromHtml(getString(R.string.about_text)));
+    msg.setMovementMethod(LinkMovementMethod.getInstance());
+    msg.setClickable(true);
+
+    aboutDialog = new AlertDialog.Builder(this)
+        .setTitle("Ambilike " + BuildConfig.VERSION_NAME)
+        .setView(msg)
         .show();
   }
 
@@ -381,6 +399,16 @@ public class HueConfigureActivity extends ActionBarActivity
     {
       setIntent(getIntent().putExtra("showDialog", 0));
     }
+  }
+
+  @Override
+  protected void onDestroy()
+  {
+    if (aboutDialog != null)
+    {
+      aboutDialog.dismiss();
+    }
+    super.onDestroy();
   }
 
   @Receiver(actions = HueConfigureActivity.IsConnectedAction, local = true, registerAt = Receiver
