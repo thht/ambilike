@@ -250,6 +250,12 @@ public class HueConfigureActivity extends ActionBarActivity
         .show();
   }
 
+  @OptionsItem(R.id.exit)
+  void exit()
+  {
+    hueController.terminate();
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
