@@ -82,29 +82,32 @@ public class HueService extends Service
       @Override
       public void run()
       {
-        if (hueThread == null && hueController.isConnected())
+        synchronized (HueService.class)
         {
-          DisplayMetrics metrics = new DisplayMetrics();
-          windowManager.getDefaultDisplay().getMetrics(metrics);
-          hueThread = new HueThread(metrics.widthPixels, metrics.heightPixels,
-              getApplicationContext(), hueController);
-          hueThread.start();
-          hueNotification.setNotificationText("Running");
-        }
-        else
-        {
-          if (hueThread != null)
+          if (hueThread == null && hueController.isConnected())
           {
-            hueThread.terminate();
-          }
-          hueThread = null;
-          if (hueController.isConnected)
-          {
-            hueNotification.setNotificationText("Stopped");
+            DisplayMetrics metrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(metrics);
+            hueThread = new HueThread(metrics.widthPixels, metrics.heightPixels,
+                getApplicationContext(), hueController);
+            hueThread.start();
+            hueNotification.setNotificationText("Running");
           }
           else
           {
-            hueNotification.setNotificationText("Connection Failed");
+            if (hueThread != null)
+            {
+              hueThread.terminate();
+            }
+            hueThread = null;
+            if (hueController.isConnected)
+            {
+              hueNotification.setNotificationText("Stopped");
+            }
+            else
+            {
+              hueNotification.setNotificationText("Connection Failed");
+            }
           }
         }
       }
