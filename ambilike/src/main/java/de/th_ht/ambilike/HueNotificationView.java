@@ -28,14 +28,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by th on 12.02.2015.
- */
+
 public class HueNotificationView extends RemoteViews
 {
   private final List<Integer> buttons = new ArrayList<>(Arrays.asList(R.id.buttonStartStop,
       R.id.buttonBrighter, R.id.buttonDarker, R.id.buttonConfigure));
-  private Context app_context;
+  private final Context app_context;
 
   public HueNotificationView(Context _app_context)
   {

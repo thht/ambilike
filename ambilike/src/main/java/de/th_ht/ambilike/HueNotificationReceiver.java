@@ -26,13 +26,12 @@ import android.content.Intent;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EReceiver;
 
-/**
- * Created by th on 16.02.2015.
- */
+
 @EReceiver
 public class HueNotificationReceiver extends BroadcastReceiver
 {
   @Bean
+  private
   HueNotification hueNotification;
 
   @Override

@@ -24,10 +24,8 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.http.GET;
 
-/**
- * Created by th on 28.02.2015.
- */
-public interface HueNUPNPRestInterface
+
+interface HueNUPNPRestInterface
 {
   @GET("/api/nupnp")
   void getDevices(Callback<List<Device>> callback);

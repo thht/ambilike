@@ -37,12 +37,10 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/**
- * Created by th on 27.02.2015.
- */
+
 public class HueDiscover
 {
-  private static List<Device> devices = new ArrayList<>(100);
+  private static final List<Device> devices = new ArrayList<>(100);
   private static HueDiscoverListener listener;
   private static Thread discoverThread = null;
 
@@ -55,53 +53,6 @@ public class HueDiscover
     }
 
     HueDiscover.listener = _listener;
-
-    RegistryListener listener = new RegistryListener()
-    {
-      public void remoteDeviceDiscoveryStarted(Registry registry,
-                                               RemoteDevice device)
-      {
-      }
-
-      public void remoteDeviceDiscoveryFailed(Registry registry,
-                                              RemoteDevice device,
-                                              Exception ex)
-      {
-      }
-
-      public void remoteDeviceAdded(Registry registry, RemoteDevice device)
-      {
-        if (device.getDetails().getModelDetails().getModelName().contains("hue bridge"))
-        {
-          devices.add(new Device(device.getDetails().getBaseURL().toString(),
-              device.getDetails().getFriendlyName()));
-        }
-      }
-
-      public void remoteDeviceUpdated(Registry registry, RemoteDevice device)
-      {
-      }
-
-      public void remoteDeviceRemoved(Registry registry, RemoteDevice device)
-      {
-      }
-
-      public void localDeviceAdded(Registry registry, LocalDevice device)
-      {
-      }
-
-      public void localDeviceRemoved(Registry registry, LocalDevice device)
-      {
-      }
-
-      public void beforeShutdown(Registry registry)
-      {
-      }
-
-      public void afterShutdown()
-      {
-      }
-    };
 
     discoverThread = new Thread(new Runnable()
     {
@@ -186,8 +137,8 @@ public class HueDiscover
 
   public static class Device
   {
-    public String url;
-    public String name;
+    public final String url;
+    public final String name;
 
     public Device(String url, String name)
     {
@@ -196,7 +147,7 @@ public class HueDiscover
     }
   }
 
-  public static class UPNPListener implements RegistryListener
+  private static class UPNPListener implements RegistryListener
   {
     public void remoteDeviceDiscoveryStarted(Registry registry,
                                              RemoteDevice device)

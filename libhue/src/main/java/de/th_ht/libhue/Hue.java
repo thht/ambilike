@@ -155,7 +155,8 @@ public class Hue
    */
   private String _tryAuthenticate(String devicename, String username) throws AuthenticateError
   {
-    List<HueRestInterface.PostPutResponse> responseList = null;
+    List<HueRestInterface.PostPutResponse> responseList;
+    //noinspection CaughtExceptionImmediatelyRethrown
     try
     {
       responseList = hueRestInterface.createUser(new HueRestInterface.User(devicename, username));
@@ -189,7 +190,7 @@ public class Hue
    * @param timeout
    * @return
    */
-  public void tryAuthenticate(int timeout)
+  void tryAuthenticate(int timeout)
   {
     if (authThread != null)
     {
@@ -213,9 +214,9 @@ public class Hue
     return lights;
   }
 
-  synchronized protected void updateAllLights() throws RestReturnError
+  synchronized void updateAllLights() throws RestReturnError
   {
-    Map<String, HueRestInterface.LightState> retLights = null;
+    Map<String, HueRestInterface.LightState> retLights;
     try
     {
       retLights = hueRestInterface.getLights(username);
@@ -275,7 +276,7 @@ public class Hue
     return lights.get(id).state;
   }
 
-  protected void postUpdate(int id, HueRestInterface.LightUpdate newstate, final boolean doUpdate)
+  void postUpdate(int id, HueRestInterface.LightUpdate newstate, final boolean doUpdate)
   {
     hueRestInterface.setLightState(username, id, newstate, new Callback<List<HueRestInterface
         .PostPutResponse>>()
@@ -295,7 +296,7 @@ public class Hue
               {
                 updateAllLights();
               }
-              catch (RestReturnError e)
+              catch (RestReturnError ignored)
               {
               }
             }
@@ -324,7 +325,7 @@ public class Hue
     return username;
   }
 
-  protected void connectionLost(Exception exception)
+  void connectionLost(Exception exception)
   {
     if (connectionGood && isConnected)
     {
@@ -338,7 +339,7 @@ public class Hue
     }
   }
 
-  protected void connectionResumed()
+  void connectionResumed()
   {
     if (!connectionGood && isConnected)
     {
@@ -349,9 +350,9 @@ public class Hue
 
   class AuthRunnable implements Runnable
   {
-    String devicename;
-    String username;
-    int timeout;
+    final String devicename;
+    final String username;
+    final int timeout;
 
     AuthRunnable(String devicename, String username, int timeout)
     {

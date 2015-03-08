@@ -36,15 +36,16 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class Screenshot implements Serializable
+class Screenshot implements Serializable
 {
-  protected Bitmap shot;
-  private String myFilesDir;
-  private String cmdline;
-  private int displaywidth, displayheight;
-  private Semaphore semaphore;
+  private final Bitmap shot;
+  private final String myFilesDir;
+  private final String cmdline;
+  private final int displaywidth;
+  private final int displayheight;
+  private final Semaphore semaphore;
+  private final Thread shellThread;
   private Process sh;
-  private Thread shellThread;
   private int oldClr;
 
   public Screenshot(int _displaywidth, int _displayheight, Context appContext)
@@ -182,7 +183,7 @@ public class Screenshot implements Serializable
       view.setImageBitmap(shot);
       semaphore.release();
     }
-    catch (Exception e)
+    catch (Exception ignored)
     {
     }
   }
@@ -207,7 +208,7 @@ public class Screenshot implements Serializable
         curSwatch = pal.getVibrantSwatch();
         maxpop = curSwatch.getPopulation();
       }
-      catch (Exception e2)
+      catch (Exception ignored)
       {
 
       }

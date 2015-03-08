@@ -25,10 +25,8 @@ import java.net.HttpURLConnection;
 import retrofit.client.Request;
 import retrofit.client.UrlConnectionClient;
 
-/**
- * Created by th on 28.02.2015.
- */
-public final class HueConnectionClient extends UrlConnectionClient
+
+final class HueConnectionClient extends UrlConnectionClient
 {
   @Override
   protected HttpURLConnection openConnection(Request request) throws IOException

@@ -34,9 +34,6 @@ import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
-/**
- * Created by th on 17.02.2015.
- */
 
 @SuppressLint("Registered")
 @EService
@@ -48,18 +45,22 @@ public class HueService extends Service
   NotificationManager n_mgr;
 
   @Bean
+  private
   HueNotification hueNotification;
 
   @Bean
+  private
   HueController hueController;
 
   @Pref
+  private
   HuePreferences_ preferences;
 
   @SystemService
+  private
   WindowManager windowManager;
 
-  HueThread hueThread;
+  private HueThread hueThread;
 
   public static void terminate(Context context)
   {
@@ -147,13 +148,6 @@ public class HueService extends Service
     return START_STICKY;
   }
 
-  @Override
-  public void onDestroy()
-  {
-    //stopForeground(true);
-    super.onDestroy();
-  }
-
   void connect()
   {
     hueController.testRoot();
@@ -165,7 +159,7 @@ public class HueService extends Service
     return mBinder;
   }
 
-  public class LocalBinder extends Binder
+  private class LocalBinder extends Binder
   {
   }
 }

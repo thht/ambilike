@@ -20,10 +20,10 @@
 <resources>
     <string name="about_text"><![CDATA[
         <html>
-        <p><b>(c) 2015 by Thomas Hartmann</b></p>
+        <p><b>© 2015 by Thomas Hartmann</b></p>
         <p>This programm is free software under the GPL version 3 or later.</p>
         <p>For support and help, please go to
             <a href="https://github.com/thht/ambilike">our github page.</a></p>
-        </html>]]>
-    </string>
+        </html>
+    ]]></string>
 </resources>

@@ -21,9 +21,7 @@ package de.th_ht.libhue;
 
 import android.graphics.Color;
 
-/**
- * Created by th on 28.02.2015.
- */
+
 public abstract class HueLightObject
 {
   protected final double x1 = 0.674;
@@ -32,10 +30,10 @@ public abstract class HueLightObject
   protected final double y2 = 0.517;
   protected final double x3 = 0.168;
   protected final double y3 = 0.041;
-  protected HueRestInterface.LightUpdate curUpdate;
-  protected Hue bridge;
+  final Hue bridge;
+  HueRestInterface.LightUpdate curUpdate;
 
-  protected HueLightObject()
+  HueLightObject()
   {
     this.bridge = Hue.getInstance();
     curUpdate = new HueRestInterface.LightUpdate();
@@ -73,7 +71,7 @@ public abstract class HueLightObject
     return this;
   }
 
-  public HueLightObject setXY(float[] xy)
+  HueLightObject setXY(float[] xy)
   {
     Float[] tmp = new Float[2];
     tmp[0] = xy[0];

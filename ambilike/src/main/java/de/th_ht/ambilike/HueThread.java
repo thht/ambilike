@@ -22,14 +22,12 @@ package de.th_ht.ambilike;
 import android.content.Context;
 import android.graphics.Color;
 
-/**
- * Created by th on 04.03.2015.
- */
-public class HueThread extends Thread
+
+class HueThread extends Thread
 {
-  protected boolean killed;
-  HueController hueController;
-  private Screenshot screenshot;
+  private final HueController hueController;
+  private final Screenshot screenshot;
+  private boolean killed;
 
   public HueThread(int displaywidth, int displayheight, Context context,
                    HueController hueController)

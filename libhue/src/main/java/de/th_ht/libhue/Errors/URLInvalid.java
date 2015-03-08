@@ -19,12 +19,10 @@
 
 package de.th_ht.libhue.Errors;
 
-/**
- * Created by th on 28.02.2015.
- */
+
 public class URLInvalid extends HueException
 {
-  private String url;
+  private final String url;
 
   public URLInvalid(String url)
   {

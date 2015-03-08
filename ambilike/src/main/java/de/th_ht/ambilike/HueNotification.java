@@ -32,26 +32,24 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.HashMap;
 
-/**
- * Created by th on 15.02.2015.
- */
+
 @EBean(scope = EBean.Scope.Singleton)
-public class HueNotification
+class HueNotification
 {
   private final int maxBrightness = 250;
   private final int minBrightness = 0;
   private final int brightnessStep = 5;
+  private final HashMap<Integer, Runnable> listenerMap = new HashMap<>();
   @RootContext
-  protected Context context;
+  private Context context;
   @SystemService
-  protected NotificationManager n_mgr;
+  private NotificationManager n_mgr;
   private HueNotificationView n_view;
   private Runnable startStopListener;
   private Runnable configureListener;
   private Runnable brightnessChangedListener;
   private int notificationIcon;
   private int notificationID;
-  private HashMap<Integer, Runnable> listenerMap = new HashMap<>();
   private int brightness;
   private Notification notification;
 
@@ -78,7 +76,7 @@ public class HueNotification
     setBrightness(brightness);
   }
 
-  public void updateNotification()
+  void updateNotification()
   {
     notification.contentView = n_view;
 
@@ -118,7 +116,7 @@ public class HueNotification
   }
 
   @UiThread
-  protected void ListenerRun(Runnable listener)
+  void ListenerRun(Runnable listener)
   {
     if (listener != null)
     {
@@ -133,12 +131,12 @@ public class HueNotification
     listenerMap.put(R.id.buttonConfigure, configureListener);
   }
 
-  public void darker()
+  void darker()
   {
     setBrightness(brightness - brightnessStep);
   }
 
-  public void brighter()
+  void brighter()
   {
     setBrightness(brightness + brightnessStep);
   }

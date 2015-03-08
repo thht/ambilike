@@ -28,17 +28,15 @@ import java.util.concurrent.TimeUnit;
 
 import de.th_ht.libhue.Hue;
 
-/**
- * Created by th on 02.03.2015.
- */
+
 public class HueListener implements de.th_ht.libhue.HueListener
 {
   private static int flags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP;
-  Context context;
-  HuePreferences_ preferences;
-  HueController hueController;
-  HueNotification hueNotification;
-  ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+  private final Context context;
+  private final HuePreferences_ preferences;
+  private final HueController hueController;
+  private final HueNotification hueNotification;
+  private final ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
   public HueListener(Context context, HuePreferences_ preferences, HueController hueController,
                      HueNotification hueNotification)

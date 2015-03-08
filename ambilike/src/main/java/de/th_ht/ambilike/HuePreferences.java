@@ -26,9 +26,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 import java.util.Set;
 
-/**
- * Created by th on 02.03.2015.
- */
+
 @SharedPref(value = SharedPref.Scope.UNIQUE)
 public interface HuePreferences
 {

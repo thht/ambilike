@@ -19,7 +19,7 @@
 
 package de.th_ht.ambilike;
 
-public class HueOld
+class HueOld
 {
   /*private PHHueSDK phHueSDK;
   private PHBridge bridge;

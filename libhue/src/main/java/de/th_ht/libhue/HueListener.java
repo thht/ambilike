@@ -19,9 +19,7 @@
 
 package de.th_ht.libhue;
 
-/**
- * Created by th on 28.02.2015.
- */
+
 public interface HueListener
 {
   public void onNotAuthenticated(Hue hue);

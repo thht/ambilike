@@ -62,57 +62,69 @@ import static java.lang.Math.round;
 @OptionsMenu(R.menu.hue_configure_activity)
 public class HueConfigureActivity extends ActionBarActivity
 {
-  static final int SHOW_FIND_BRIDGE = 1;
-  static final int DISMISS_FIND_BRIDGE = 2;
-  static final int SHOW_AUTHENTICATE = 3;
-  static final int DISMISS_AUTHENTICATE = 4;
-  static final int SHOW_FIND_BRIDGE_FAILED = 5;
-  static final int DISMISS_FIND_BRIDGE_FAILED = 6;
-  static final int SHOW_AUTH_FAILED = 7;
-  static final int DISMISS_AUTH_FAILED = 8;
-  static final int SHOW_ROOT_FAILED = 9;
-  static final String DiscoverDlgFragmentTag = "DiscoverDialog";
-  static final String DiscoverFailedDlgFragmentTag = "DiscoverFailedDialog";
-  static final String AuthenticateDlgFragmentTag = "AuthDialog";
-  static final String AuthenticationFailedDlgFragmentTag = "AuthFailedDialog";
-  static final String RootFailedDlgFragmentTag = "RootFailedDialog";
   static final String IsConnectedAction = "IsConnected";
-  static int intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP;
+  private static final int SHOW_FIND_BRIDGE = 1;
+  private static final int DISMISS_FIND_BRIDGE = 2;
+  private static final int SHOW_AUTHENTICATE = 3;
+  private static final int DISMISS_AUTHENTICATE = 4;
+  private static final int SHOW_FIND_BRIDGE_FAILED = 5;
+  private static final int DISMISS_FIND_BRIDGE_FAILED = 6;
+  private static final int SHOW_AUTH_FAILED = 7;
+  private static final int DISMISS_AUTH_FAILED = 8;
+  private static final int SHOW_ROOT_FAILED = 9;
+  private static final String DiscoverDlgFragmentTag = "DiscoverDialog";
+  private static final String DiscoverFailedDlgFragmentTag = "DiscoverFailedDialog";
+  private static final String AuthenticateDlgFragmentTag = "AuthDialog";
+  private static final String AuthenticationFailedDlgFragmentTag = "AuthFailedDialog";
+  private static final String RootFailedDlgFragmentTag = "RootFailedDialog";
+  private static final int intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent
+      .FLAG_ACTIVITY_SINGLE_TOP;
   @Bean
-  static
+  private static
   HueController hueController;
   @Extra
+  private final
   int showDialog = 0;
+  private final FragmentManager fragmentManager = getFragmentManager();
   @Pref
+  private
   HuePreferences_ preferences;
-
-  FragmentManager fragmentManager = getFragmentManager();
-
-  AlertDialog aboutDialog = null;
+  private AlertDialog aboutDialog = null;
 
   @ViewById
+  private
   SeekBar seekBarConfigureTransition;
   @ViewById
+  private
   SeekBar seekBarConfigureColorfulness;
   @ViewById
+  private
   SeekBar seekBarConfigureMinBrightness;
   @ViewById
+  private
   SeekBar seekBarConfigureMaxBrightness;
 
   @ViewById
+  private
   TextView textConfigureTransition;
   @ViewById
+  private
   TextView textConfigureColorfulness;
   @ViewById
+  private
   TextView textConfigureMinBrightness;
   @ViewById
+  private
   TextView textConfigureMaxBrightness;
 
   @ViewById
+  private
   Button buttonConfigureLights;
 
-  SeekbarSettings transitionSettings, colorfulnessSettings, minBrightnessSettings,
-      maxBrightnessSettings;
+  private SeekbarSettings transitionSettings;
+  private SeekbarSettings colorfulnessSettings;
+  private SeekbarSettings minBrightnessSettings;
+  private SeekbarSettings maxBrightnessSettings;
 
   public static void showFindBridge(Context context)
   {
@@ -195,7 +207,7 @@ public class HueConfigureActivity extends ActionBarActivity
           @Override
           public void onClick(DialogInterface dialogInterface, int i)
           {
-            Set<String> lights_chosen = new HashSet<String>();
+            Set<String> lights_chosen = new HashSet<>();
             for (int j = 0; j < lights_checked.length; j++)
             {
               if (lights_checked[j])
@@ -397,7 +409,7 @@ public class HueConfigureActivity extends ActionBarActivity
           break;
       }
     }
-    catch (NullPointerException e)
+    catch (NullPointerException ignored)
     {
     }
 
@@ -646,14 +658,14 @@ public class HueConfigureActivity extends ActionBarActivity
 
   private class SeekbarSettings
   {
-    private SeekBar seekbar;
-    private TextView textView;
-    private double min;
-    private double max;
+    private final SeekBar seekbar;
+    private final TextView textView;
+    private final double min;
+    private final double max;
+    private final boolean usesFloat;
+    private final OnCustomSeekbarChangedListener listener;
     private double current;
     private Validator validator;
-    private boolean usesFloat;
-    private OnCustomSeekbarChangedListener listener;
 
     private SeekbarSettings(SeekBar seekbar, final TextView textView, double min, double max,
                             final double current, boolean usesFloat,
@@ -690,7 +702,7 @@ public class HueConfigureActivity extends ActionBarActivity
       });
     }
 
-    protected int double2progress(double val)
+    int double2progress(double val)
     {
       int seekmax = seekbar.getMax();
       double prog_range = seekmax;
@@ -701,7 +713,7 @@ public class HueConfigureActivity extends ActionBarActivity
       return (int) ((val + offset) * factor);
     }
 
-    protected double progress2double(int progress)
+    double progress2double(int progress)
     {
       int seekmax = seekbar.getMax();
       double prog_range = seekmax;
@@ -743,7 +755,7 @@ public class HueConfigureActivity extends ActionBarActivity
       }
     }
 
-    protected boolean validate(double value)
+    boolean validate(double value)
     {
       if (current > max || current < min)
       {
@@ -758,7 +770,7 @@ public class HueConfigureActivity extends ActionBarActivity
       return true;
     }
 
-    protected void update()
+    void update()
     {
       seekbar.setProgress(double2progress(current));
 

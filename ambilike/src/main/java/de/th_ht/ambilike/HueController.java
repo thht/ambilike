@@ -46,22 +46,23 @@ import de.th_ht.libhue.HueLight;
 import de.th_ht.libhue.HueLightGroup;
 import timber.log.Timber;
 
-/**
- * Created by th on 02.03.2015.
- */
 
 @EBean(scope = EBean.Scope.Singleton)
-public class HueController
+class HueController
 {
-  protected boolean isConnected;
-  Hue hue;
+  boolean isConnected;
+  private Hue hue;
   @SystemService
+  private
   ActivityManager am;
   @Pref
+  private
   HuePreferences_ preferences;
   @Bean
+  private
   HueNotification hueNotification;
   @RootContext
+  private
   Context context;
   private float transition;
   private float colorExp;
@@ -102,7 +103,6 @@ public class HueController
     isConnected = false;
     try
     {
-      String url = preferences.HueURL().get();
       hue.setURL(preferences.HueURL().get(), preferences.HueUsername().getOr(UUID.randomUUID()
           .toString()));
     }
@@ -242,7 +242,7 @@ public class HueController
       lights.setRGB(Color.rgb(rgb[0], rgb[1], rgb[2]));
       lights.postUpdate();
     }
-    catch (NullPointerException e)
+    catch (NullPointerException ignored)
     {
     }
   }

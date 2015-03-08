@@ -29,9 +29,7 @@ import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 
-/**
- * Created by th on 23.02.2015.
- */
+
 public interface HueRestInterface
 {
   @POST("/api")
@@ -94,8 +92,8 @@ public interface HueRestInterface
 
   public class User
   {
-    String devicetype;
-    String username;
+    final String devicetype;
+    final String username;
 
     public User(String devicetype, String username)
     {

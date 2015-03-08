@@ -22,9 +22,7 @@ package de.th_ht.ambilike;
 import android.app.Activity;
 import android.os.Bundle;
 
-/**
- * Created by th on 02.03.2015.
- */
+
 public class StartActivity extends Activity
 {
   @Override

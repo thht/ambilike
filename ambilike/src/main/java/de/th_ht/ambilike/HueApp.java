@@ -23,10 +23,8 @@ import android.app.Application;
 
 import timber.log.Timber;
 
-/**
- * Created by th on 02.03.2015.
- */
-public class HueApp extends Application
+
+class HueApp extends Application
 {
   @Override
   public void onCreate()

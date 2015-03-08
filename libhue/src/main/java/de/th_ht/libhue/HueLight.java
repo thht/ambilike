@@ -19,15 +19,13 @@
 
 package de.th_ht.libhue;
 
-/**
- * Created by th on 23.02.2015.
- */
+
 public class HueLight extends HueLightObject
 {
-  protected HueRestInterface.LightState state;
-  private int id;
+  private final int id;
+  HueRestInterface.LightState state;
 
-  protected HueLight(HueRestInterface.LightState state, int id)
+  HueLight(HueRestInterface.LightState state, int id)
   {
     super();
     this.state = state;
@@ -56,7 +54,7 @@ public class HueLight extends HueLightObject
     return state.name;
   }
 
-  protected void setUpdate(HueRestInterface.LightUpdate update)
+  void setUpdate(HueRestInterface.LightUpdate update)
   {
     this.curUpdate = update;
   }

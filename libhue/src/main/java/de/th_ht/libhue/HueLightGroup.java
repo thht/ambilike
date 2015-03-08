@@ -26,12 +26,10 @@ import java.util.Map;
 import de.th_ht.libhue.Errors.RestReturnError;
 import retrofit.RetrofitError;
 
-/**
- * Created by th on 28.02.2015.
- */
+
 public class HueLightGroup extends HueLightObject
 {
-  List<HueLight> lights;
+  private final List<HueLight> lights;
 
   public HueLightGroup()
   {
@@ -79,10 +77,7 @@ public class HueLightGroup extends HueLightObject
         {
           bridge.updateAllLights();
         }
-        catch (RestReturnError e)
-        {
-        }
-        catch (RetrofitError e)
+        catch (RestReturnError | RetrofitError ignored)
         {
         }
       }
