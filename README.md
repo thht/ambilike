@@ -18,7 +18,6 @@ you can drop me a note and if it is easy to fix, I will do my best to do so. But
 professional, so please be patient and nice.
 
 If you think you can do anything to improve the app, specifically:
-* making a nice UI
 * improving (i.e., speeding up) taking screenshots
 * improving the color finding algorithm
 * etc.
