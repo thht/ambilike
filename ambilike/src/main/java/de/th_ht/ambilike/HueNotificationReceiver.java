@@ -31,7 +31,6 @@ import org.androidannotations.annotations.EReceiver;
 public class HueNotificationReceiver extends BroadcastReceiver
 {
   @Bean
-  private
   HueNotification hueNotification;
 
   @Override

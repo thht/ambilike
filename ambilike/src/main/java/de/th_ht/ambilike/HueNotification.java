@@ -41,9 +41,9 @@ class HueNotification
   private final int brightnessStep = 5;
   private final HashMap<Integer, Runnable> listenerMap = new HashMap<>();
   @RootContext
-  private Context context;
+  Context context;
   @SystemService
-  private NotificationManager n_mgr;
+  NotificationManager n_mgr;
   private HueNotificationView n_view;
   private Runnable startStopListener;
   private Runnable configureListener;

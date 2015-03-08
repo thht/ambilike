@@ -80,47 +80,32 @@ public class HueConfigureActivity extends ActionBarActivity
   private static final int intentFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent
       .FLAG_ACTIVITY_SINGLE_TOP;
   @Bean
-  private static
+  static
   HueController hueController;
-  @Extra
-  private final
-  int showDialog = 0;
   private final FragmentManager fragmentManager = getFragmentManager();
+  @Extra
+  int showDialog = 0;
   @Pref
-  private
   HuePreferences_ preferences;
-  private AlertDialog aboutDialog = null;
-
   @ViewById
-  private
   SeekBar seekBarConfigureTransition;
   @ViewById
-  private
   SeekBar seekBarConfigureColorfulness;
   @ViewById
-  private
   SeekBar seekBarConfigureMinBrightness;
   @ViewById
-  private
   SeekBar seekBarConfigureMaxBrightness;
-
   @ViewById
-  private
   TextView textConfigureTransition;
   @ViewById
-  private
   TextView textConfigureColorfulness;
   @ViewById
-  private
   TextView textConfigureMinBrightness;
   @ViewById
-  private
   TextView textConfigureMaxBrightness;
-
   @ViewById
-  private
   Button buttonConfigureLights;
-
+  private AlertDialog aboutDialog = null;
   private SeekbarSettings transitionSettings;
   private SeekbarSettings colorfulnessSettings;
   private SeekbarSettings minBrightnessSettings;

@@ -51,19 +51,15 @@ import timber.log.Timber;
 class HueController
 {
   boolean isConnected;
-  private Hue hue;
   @SystemService
-  private
   ActivityManager am;
   @Pref
-  private
   HuePreferences_ preferences;
   @Bean
-  private
   HueNotification hueNotification;
   @RootContext
-  private
   Context context;
+  private Hue hue;
   private float transition;
   private float colorExp;
   private int briMult;

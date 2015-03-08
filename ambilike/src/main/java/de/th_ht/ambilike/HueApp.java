@@ -24,7 +24,7 @@ import android.app.Application;
 import timber.log.Timber;
 
 
-class HueApp extends Application
+public class HueApp extends Application
 {
   @Override
   public void onCreate()

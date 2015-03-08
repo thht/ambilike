@@ -45,19 +45,15 @@ public class HueService extends Service
   NotificationManager n_mgr;
 
   @Bean
-  private
   HueNotification hueNotification;
 
   @Bean
-  private
   HueController hueController;
 
   @Pref
-  private
   HuePreferences_ preferences;
 
   @SystemService
-  private
   WindowManager windowManager;
 
   private HueThread hueThread;
