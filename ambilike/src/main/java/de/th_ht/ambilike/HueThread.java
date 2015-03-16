@@ -28,6 +28,7 @@ class HueThread extends Thread
   private final HueController hueController;
   private final Screenshot screenshot;
   private boolean killed;
+  private int nLights;
 
   public HueThread(int displaywidth, int displayheight, Context context,
                    HueController hueController)
@@ -35,6 +36,7 @@ class HueThread extends Thread
     super();
     this.hueController = hueController;
     screenshot = new Screenshot(displaywidth, displayheight, context);
+    nLights = hueController.getAllLights().size();
   }
 
   @Override
@@ -44,6 +46,14 @@ class HueThread extends Thread
     boolean good = true;
     while (!killed)
     {
+      try
+      {
+        sleep(100);
+      }
+      catch (InterruptedException e)
+      {
+        killed = true;
+      }
       good = screenshot.snap();
       if (good)
       {

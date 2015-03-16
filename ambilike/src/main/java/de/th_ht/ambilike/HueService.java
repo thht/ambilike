@@ -84,7 +84,7 @@ public class HueService extends Service
           if (hueThread == null && hueController.isConnected())
           {
             DisplayMetrics metrics = new DisplayMetrics();
-            windowManager.getDefaultDisplay().getMetrics(metrics);
+            windowManager.getDefaultDisplay().getRealMetrics(metrics);
             hueThread = new HueThread(metrics.widthPixels, metrics.heightPixels,
                 getApplicationContext(), hueController);
             hueThread.start();

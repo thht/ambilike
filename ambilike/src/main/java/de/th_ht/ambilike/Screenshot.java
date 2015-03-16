@@ -1,6 +1,6 @@
 /*
- * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android 
- * * device
+ * Ambilike produces an Ambilight like effect using the Philips Hue system and a rooted Android
+ * device
  * Copyright (C) 2015  Thomas Hartmann <thomas.hartmann@th-ht.de>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,15 +20,10 @@
 package de.th_ht.ambilike;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.support.v7.graphics.Palette;
 import android.widget.ImageView;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -39,7 +34,6 @@ import java.util.concurrent.Semaphore;
 class Screenshot implements Serializable
 {
   private final Bitmap shot;
-  private final String myFilesDir;
   private final String cmdline;
   private final int displaywidth;
   private final int displayheight;
@@ -47,6 +41,8 @@ class Screenshot implements Serializable
   private final Thread shellThread;
   private Process sh;
   private int oldClr;
+  private int nBytes;
+  private byte[] allbytes;
 
   public Screenshot(int _displaywidth, int _displayheight, Context appContext)
   {
@@ -54,11 +50,12 @@ class Screenshot implements Serializable
     displaywidth = _displaywidth;
     displayheight = _displayheight;
 
-    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(appContext);
-    myFilesDir = appContext.getExternalCacheDir().toString();
-
-    cmdline = "/system/bin/screencap " + myFilesDir + "/test.raw\n";
-    //cmdline = "/system/bin/screencap\n";
+    shot.setHeight(displayheight);
+    shot.setWidth(displaywidth);
+    shot.setHasAlpha(true);
+    nBytes = (displayheight * displaywidth) * 4;
+    allbytes = new byte[nBytes];
+    cmdline = "/system/bin/screencap\n";
 
     semaphore = new Semaphore(1);
     try
@@ -107,18 +104,10 @@ class Screenshot implements Serializable
 
     try
     {
-      File lockfile = new File(myFilesDir + "/test.raw");
-      lockfile.delete();
 
       OutputStream os = sh.getOutputStream();
       os.write(cmdline.getBytes("ASCII"));
       os.flush();
-
-      lockfile = new File(lockfile.getAbsolutePath());
-      while (!lockfile.exists() || lockfile.length() < (displayheight * displaywidth) * 4 + 12)
-      {
-        Thread.sleep(50);
-      }
     }
     catch (Exception e)
     {
@@ -131,6 +120,8 @@ class Screenshot implements Serializable
 
     boolean isProcessed = processImage();
 
+    //Timber.d("Processing took " + ((newtime / 1000000 - oldtime / 1000000)) + "ms");
+
     semaphore.release();
 
     return (isProcessed);
@@ -138,18 +129,11 @@ class Screenshot implements Serializable
 
   private boolean processImage()
   {
-    shot.setHeight(displayheight);
-    shot.setWidth(displaywidth);
-    shot.setHasAlpha(true);
-    int nBytes = (displayheight * displaywidth) * 4;
-
-    File infile = null;
-    InputStream in = null;
+    InputStream in;
 
     try
     {
-      infile = new File(myFilesDir + "/test.raw");
-      in = new BufferedInputStream(new FileInputStream(infile));
+      in = sh.getInputStream();
     }
     catch (Exception e)
     {
@@ -157,12 +141,18 @@ class Screenshot implements Serializable
       return false;
     }
 
-    byte[] allbytes = new byte[nBytes];
-
     try
     {
       in.skip(12);
-      in.read(allbytes, 0, nBytes);
+      int readbytes = 0;
+      while (readbytes < nBytes)
+      {
+        int tmp = in.read(allbytes, readbytes, nBytes - readbytes);
+        if (tmp > 0)
+        {
+          readbytes = readbytes + tmp;
+        }
+      }
     }
     catch (Exception e)
     {
