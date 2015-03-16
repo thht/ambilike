@@ -44,11 +44,19 @@ class HueThread extends Thread
   {
     killed = false;
     boolean good = true;
+    ColorAverager colorAverager = new ColorAverager();
+    long oldtime = System.nanoTime();
+    long curtime = oldtime;
+    long timediff = 100 * nLights * 1000000;
+
+    setPriority(MIN_PRIORITY);
+    android.os.Process.setThreadPriority(19);
+
     while (!killed)
     {
       try
       {
-        sleep(100);
+        sleep(50);
       }
       catch (InterruptedException e)
       {
@@ -58,11 +66,20 @@ class HueThread extends Thread
       if (good)
       {
         int clr = screenshot.getDominantColor();
-        int[] rgb = new int[]{Color.red(clr), Color.green(clr), Color.blue(clr)};
         float[] hsv = new float[3];
         Color.colorToHSV(clr, hsv);
 
-        hueController.setColor(rgb, (int) (hsv[2] * 255));
+        colorAverager.put(Color.red(clr), Color.green(clr), Color.blue(clr), (int) (hsv[2] * 255));
+      }
+
+      curtime = System.nanoTime();
+      if ((curtime - oldtime) > timediff)
+      {
+        int[] rgb = new int[]{colorAverager.red(), colorAverager.green(), colorAverager.blue()};
+        hueController.setColor(rgb, colorAverager.brightness());
+        //Timber.d("averager has " + colorAverager.size() + " items.");
+        //colorAverager.clear();
+        oldtime = curtime;
       }
     }
   }

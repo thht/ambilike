@@ -24,7 +24,7 @@ import android.graphics.Bitmap;
 import android.support.v7.graphics.Palette;
 import android.widget.ImageView;
 
-import java.io.InputStream;
+import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
@@ -43,6 +43,7 @@ class Screenshot implements Serializable
   private int oldClr;
   private int nBytes;
   private byte[] allbytes;
+  private BufferedInputStream in;
 
   public Screenshot(int _displaywidth, int _displayheight, Context appContext)
   {
@@ -55,7 +56,7 @@ class Screenshot implements Serializable
     shot.setHasAlpha(true);
     nBytes = (displayheight * displaywidth) * 4;
     allbytes = new byte[nBytes];
-    cmdline = "/system/bin/screencap\n";
+    cmdline = "/system/bin/busybox nice -n 19 /system/bin/screencap\n";
 
     semaphore = new Semaphore(1);
     try
@@ -74,6 +75,7 @@ class Screenshot implements Serializable
         try
         {
           sh = Runtime.getRuntime().exec("su", null, null);
+          in = new BufferedInputStream(sh.getInputStream());
         }
         catch (Exception e)
         {
@@ -129,18 +131,6 @@ class Screenshot implements Serializable
 
   private boolean processImage()
   {
-    InputStream in;
-
-    try
-    {
-      in = sh.getInputStream();
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      return false;
-    }
-
     try
     {
       in.skip(12);
@@ -152,6 +142,7 @@ class Screenshot implements Serializable
         {
           readbytes = readbytes + tmp;
         }
+        Thread.yield();
       }
     }
     catch (Exception e)

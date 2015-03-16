@@ -30,6 +30,7 @@ public class HueApp extends Application
   public void onCreate()
   {
     super.onCreate();
+    android.os.Process.setThreadPriority(19);
     Timber.plant(new Timber.DebugTree());
   }
 }
